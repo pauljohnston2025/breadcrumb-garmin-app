@@ -847,7 +847,7 @@ class Settings {
         // assert(tileUrl.equals(COMPANION_APP_TILE_URL));
 
         // if the users goes custom and has the companion app url, we still do not update the tiles layers
-        // this is because they may be artificially capping the tileLayerMax property eg. a tile server on the phone that has 20 layers, but the user only wants
+        // this is because they may be artificially capping the tileLayerMax property eg. a tile server on the phone that has 20 layers, but the user only wants 
         // 15 layers on the watch in order to be able to run offline tiles and store them all.
         if (mapChoice != 1) {
             // we are no longer on the companion app, abort
@@ -1491,7 +1491,7 @@ class Settings {
         routes = [];
         saveRoutes();
     }
-
+    
     function storageCleared() as Void {
         // routes are already cleared seperately through context
         safeSetStorage("lastMapChoice", mapChoice); // make sure we do not reload our map choice
@@ -1532,7 +1532,10 @@ class Settings {
         var toSave = routesToSave();
         // note toSave is Array<Dictionary<String, PropertyValueType>>
         // but the compiler only allows "Array<PropertyValueType>" even though the array of dicts seems to work on sim and real watch
-        safeSetStorage("routes", toSave as Array<PropertyValueType>);
+        safeSetStorage(
+            "routes",
+            toSave as Array<PropertyValueType>
+        );
     }
 
     (:settingsView)
@@ -1825,15 +1828,10 @@ class Settings {
                 // anything with leading FF (when 8 characters supplied) needs to be a long, because its too big to fit in Number
                 // if a user chooses FFFFFFFF (white) it is (-1) which is fully transparent, should choose FFFFFF (no alpha) or something close like FFFFFFFE
                 // in any case we are currently ignoring alpha because we use setColor (text does not support alpha)
-                var long = colourString.toNumberWithBase(16); // guess old users will just have to enter less digits
-                if (colourString has :toLongWithBase) {
-                    long = colourString.toLongWithBase(16);
-                }
+                var long = colourString.toLongWithBase(16);
                 if (long == null) {
                     return defaultValue;
                 }
-
-                long = long.toLong(); // might have been a number from toNumberWithBase
 
                 // calling tonumber breaks - because its out of range, but we need to set the alpha bits
                 var number = (long & 0xffffffffl).toNumber();
@@ -2080,10 +2078,6 @@ class Settings {
         return defaultValue;
     }
 
-    (:noCompanionSettings)
-    function resetDefaults() as Void {}
-
-    (:companionSettings)
     function resetDefaults() as Void {
         logT("Resetting settings to default values");
         // clear the flag first thing in case of crash we do not want to try clearing over and over
@@ -2175,11 +2169,6 @@ class Settings {
         updateViewSettings();
     }
 
-    (:noCompanionSettings)
-    function asDict() as Dictionary<String, PropertyValueType> {
-        return ({}) as Dictionary<String, PropertyValueType>;
-    }
-    (:companionSettings)
     function asDict() as Dictionary<String, PropertyValueType> {
         // all these return values should be identical to the storage value
         // eg. nulls are exposed as 0
@@ -2260,10 +2249,6 @@ class Settings {
         );
     }
 
-    (:noCompanionSettings)
-    function saveSettings(settings as Dictionary<String, PropertyValueType>) as Void {}
-
-    (:companionSettings)
     function saveSettings(settings as Dictionary<String, PropertyValueType>) as Void {
         // should we sanitize this as its untrusted? makes it significantly more annoying to do
         var keys = settings.keys();

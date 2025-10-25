@@ -59,7 +59,6 @@ class BitmapCreateError extends Lang.Exception {
 // https://developer.garmin.com/connect-iq/core-topics/graphics/#graphics
 // we must call get and keep the reference otherwise it can get cleanup up from under us
 // not too bad for temporaries, but terrible for tiles (they can not be garbage collected)
-(:bufferedBitmap40)
 function newBitmap(width as Number, height as Number) as Graphics.BufferedBitmap {
     var options = {
         :width => width,
@@ -73,16 +72,6 @@ function newBitmap(width as Number, height as Number) as Graphics.BufferedBitmap
     }
 
     return bitmap;
-}
-
-(:bufferedBitmap23)
-function newBitmap(width as Number, height as Number) as Graphics.BufferedBitmap {
-    var options = {
-        :width => width,
-        :height => height,
-    };
-
-    return new Graphics.BufferedBitmap(options);
 }
 
 (:debug,:inline)
@@ -129,19 +118,7 @@ function drawScaledBitmapHelper(
     dc.drawScaledBitmap(x, y, width, height, bitmap);
 }
 
-(:noscaledbitmap,:noAffineTransform)
-function drawScaledBitmapHelper(
-    dc as Dc,
-    x as Numeric,
-    y as Numeric,
-    width as Numeric,
-    height as Numeric,
-    bitmap as BitmapType
-) as Void {
-    unsupported(dc, "rotation");
-}
-
-(:noscaledbitmap,:affineTransform)
+(:noscaledbitmap)
 function drawScaledBitmapHelper(
     dc as Dc,
     x as Numeric,

@@ -1,0 +1,35 @@
+<menu2 id="SettingsMapAttribution" title="@Strings.attribution" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <menu-item id="settingsMapAttributionOpenTopoMap" label="@Strings.openTopoMapAttribution"/>
+    <menu-item id="settingsMapAttributionEsri" label="@Strings.esriAttribution"/>
+    <menu-item id="settingsMapAttributionOpenStreetmap" label="@Strings.openStreetmapAttribution"/>
+    <menu-item id="settingsMapAttributionStadia" label="@Strings.stadiaAttribution"/>
+    <menu-item id="settingsMapAttributionOpenmaptiles" label="@Strings.openmaptilesAttribution"/>
+    <menu-item id="settingsMapAttributionCarto" label="@Strings.cartoAttribution"/>
+    <menu-item id="settingsMapAttributionMapy" label="@Strings.mapyAttribution"/>
+</menu2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

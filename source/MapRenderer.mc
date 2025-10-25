@@ -272,7 +272,7 @@ class MapRenderer {
         var useDrawBitmap = _settings.useDrawBitmap; // local lookup faster
 
         // perhaps we should draw all tiles then draw all border lines in second for loop?
-        // this for loop is nice though, as it only draws borders on the tiles that are drawn (and we have in our tile cache), not every possible tile on the screen
+        // this for loop is noce though, as it only draws borders on the tiles that are drawn (and we have in our tile cache), not every possible tile on the screen
         var rotateCosNeg = 0f; // only calculate if we need it
         var rotateSinNeg = 0f; // only calculate if we need it
         if (_settings.showTileBorders) {
@@ -374,7 +374,11 @@ class MapRenderer {
                         tileOffsetY,
                         tileScalePixelSize,
                         rotateSinNeg,
-                        rotateCosNeg
+                        rotateCosNeg,
+                        bufferedBitmapOffsetX,
+                        bufferedBitmapOffsetY,
+                        rotateAroundScreenX,
+                        rotateAroundScreenY
                     );
                 }
             }
@@ -390,7 +394,11 @@ class MapRenderer {
         tileOffsetY as Number,
         tileScalePixelSize as Number,
         rotateSinNeg as Decimal,
-        rotateCosNeg as Decimal
+        rotateCosNeg as Decimal,
+        bufferedBitmapOffsetX as Float,
+        bufferedBitmapOffsetY as Float,
+        rotateAroundScreenX as Float,
+        rotateAroundScreenY as Float
     ) as Void {
         unsupported(dc, "tile borders");
     }
@@ -404,13 +412,12 @@ class MapRenderer {
         tileOffsetY as Number,
         tileScalePixelSize as Number,
         rotateSinNeg as Decimal,
-        rotateCosNeg as Decimal
+        rotateCosNeg as Decimal,
+        bufferedBitmapOffsetX as Float,
+        bufferedBitmapOffsetY as Float,
+        rotateAroundScreenX as Float,
+        rotateAroundScreenY as Float
     ) as Void {
-        var rotateAroundScreenX = getApp().breadcrumbContext.cachedValues.rotateAroundScreenX; // local lookup faster
-        var rotateAroundScreenY = getApp().breadcrumbContext.cachedValues.rotateAroundScreenY; // local lookup faster
-        var bufferedBitmapOffsetX = getApp().breadcrumbContext.cachedValues.bufferedBitmapOffsetX; // local lookup faster
-        var bufferedBitmapOffsetY = getApp().breadcrumbContext.cachedValues.bufferedBitmapOffsetY; // local lookup faster
-        
         // we have to manually draw rotated lines, since we cannot draw to a buffered bitmap (taking up too much memory)
         // we could probably avoid drawing 2 where the tiles overlap, but then have to handle the outer tiles differently
         // its only a debug settings in a rarely used mode, so fine to do multiple draws
