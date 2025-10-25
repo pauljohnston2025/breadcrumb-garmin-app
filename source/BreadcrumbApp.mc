@@ -58,17 +58,27 @@ class SettingsSent extends Communications.ConnectionListener {
 // for supported image formats of devices
 // cat ./**/compiler.json | grep -E 'imageFormats|displayName' -A 5
 // looks like if it does not have a key for "imageFormats" the device only supports native formats and "Source must be native color format" if trying to use anything else.
-class BreadcrumbDataFieldApp extends Application.AppBase {
+class BreadcrumbApp extends Application.AppBase {
+    var _session as ActivityRecording.Session? = null;
     var _breadcrumbContext as BreadcrumbContext;
-    var _view as BreadcrumbDataFieldView;
+    var _view as BreadcrumbView;
 
     var _commStatus as CommStatus = new CommStatus();
 
     function initialize() {
         AppBase.initialize();
         _breadcrumbContext = new BreadcrumbContext();
-        _view = new BreadcrumbDataFieldView(_breadcrumbContext);
+        _view = new BreadcrumbView(_breadcrumbContext);
         _breadcrumbContext.setup();
+    }
+
+    function timerCallback() as Void {
+        var activityInfo = Activity.getActivityInfo();
+        if (activityInfo != null) {
+            _view.compute(activityInfo);
+        }
+        // request update every time we update the activity, similar to what data fields do
+        WatchUi.requestUpdate();
     }
 
     function onSettingsChanged() as Void {
@@ -86,18 +96,33 @@ class BreadcrumbDataFieldApp extends Application.AppBase {
             logT("registering for phone messages");
             Communications.registerForPhoneAppMessages(method(:onPhone));
         }
+
+        // todo do this on button press and let user choose activity type
+        _session = ActivityRecording.createSession({
+            // set up recording session
+            :name => "Generic", // set session name
+            :sport => Activity.SPORT_GENERIC, // set sport type
+            :subSport => Activity.SUB_SPORT_GENERIC, // set sub sport type
+        });
+
+        var myTimer = new Timer.Timer();
+        myTimer.start(method(:timerCallback), 1000, true);
     }
 
     // onStop() is called when your application is exiting
 
-    function onStop(state as Dictionary?) as Void {}
+    function onStop(state as Dictionary?) as Void {
+        if (_session != null) {
+            _session.save();
+        }
+    }
 
     // Return the initial view of your application here
     function getInitialView() as [Views] or [Views, InputDelegates] {
         // to open settings to test the simulator has it in an obvious place
         // Settings -> Trigger App Settings (right down the bottom - almost off the screen)
         // then to go back you need to Settings -> Time Out App Settings
-        return [_view, new BreadcrumbDataFieldDelegate(_breadcrumbContext)];
+        return [_view, new BreadcrumbDelegate(_breadcrumbContext)];
     }
 
     (:noSettingsView)
@@ -263,6 +288,6 @@ class BreadcrumbDataFieldApp extends Application.AppBase {
     }
 }
 
-function getApp() as BreadcrumbDataFieldApp {
-    return Application.getApp() as BreadcrumbDataFieldApp;
+function getApp() as BreadcrumbApp {
+    return Application.getApp() as BreadcrumbApp;
 }

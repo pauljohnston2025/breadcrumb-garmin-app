@@ -205,7 +205,7 @@ class DirectionAlert extends WatchUi.DataFieldAlert {
 //                 "datafields": [
 // note: this only allows taps, cannot handle swipes/holds etc. (need to test on
 // real device)
-class BreadcrumbDataFieldView extends WatchUi.DataField {
+class BreadcrumbView extends WatchUi.View {
     var offTrackInfo as OffTrackInfo = new OffTrackInfo(true, null, false);
     var _breadcrumbContext as BreadcrumbContext;
     var _scratchPadBitmap as BufferedBitmap?;

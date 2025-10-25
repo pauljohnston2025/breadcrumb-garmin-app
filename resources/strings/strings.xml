@@ -1,6 +1,6 @@
 <strings>
-    <string id="AppName">Breadcrumb</string>
-    <string id="settingsTitle">Breadcrumb</string>
+    <string id="AppName">BreadcrumbApp</string>
+    <string id="settingsTitle">Breadcrumb App</string>
 
     <string id="layerTileSize">Tile Size (pixels)</string>
     <string id="tileLayerMaxTitle">Tile Layer Max</string>

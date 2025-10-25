@@ -3,7 +3,7 @@ import Toybox.System;
 import Toybox.Lang;
 
 // see BreadcrumbDataFieldView if touch stops working
-class BreadcrumbDataFieldDelegate extends WatchUi.InputDelegate {
+class BreadcrumbDelegate extends WatchUi.InputDelegate {
     var _breadcrumbContext as BreadcrumbContext;
 
     function initialize(breadcrumbContext as BreadcrumbContext) {
