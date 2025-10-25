@@ -46,9 +46,9 @@ enum /*RenderMode*/ {
 }
 
 enum /*RenderMode*/ {
-    ALERT_TYPE_TOAST,
-    ALERT_TYPE_ALERT,
-    ALERT_TYPE_IMAGE,
+    ALERT_TYPE_TOAST = 0,
+    // ALERT_TYPE_ALERT, // not used in app mode
+    ALERT_TYPE_IMAGE = 2,
     ALERT_TYPE_MAX,
 }
 

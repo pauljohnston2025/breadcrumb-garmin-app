@@ -10,7 +10,7 @@ base.excludeAnnotations = $(base.excludeAnnotations);tileBorders;showPoints;draw
 
 # to get devices and their memory limits
 # cd <homedir>/AppData/Roaming/Garmin/ConnectIQ/Devices/
-# cat ./**/compiler.json | grep -E '"type": "datafield"|displayName' -B 1
+# cat ./**/compiler.json | grep -E '"type": "watchApp"|displayName|deviceId' -B 1
 # we currently need 128.5Kb of memory
 
 highMemExcludes=noSettingsView;noUnbufferedRotations;noStorage;noCompanionTiles;lowMemory;noImageTiles
@@ -153,3 +153,16 @@ vivoactive5.excludeAnnotations = $(vivoactive5.excludeAnnotations);rectangle;sca
 vivoactive5.resourcePath = $(vivoactive5.resourcePath);resources-high-memory
 vivoactive6.excludeAnnotations = $(vivoactive6.excludeAnnotations);rectangle;noscaledbitmap;$(highMemExcludes)
 vivoactive6.resourcePath = $(vivoactive6.resourcePath);resources-high-memory
+
+
+# system 4 devices (and some system 5 that had low memory on datafield, but have enough memory on app)
+gpsmaph1.excludeAnnotations = $(gpsmaph1.excludeAnnotations);rectangle;noscaledbitmap;$(highMemExcludes)
+gpsmaph1.resourcePath = $(gpsmaph1.resourcePath);resources-high-memory
+instinct3solar45mm.excludeAnnotations = $(instinct3solar45mm.excludeAnnotations);rectangle;noscaledbitmap;$(lowMemExcludes)
+instinct3solar45mm.resourcePath = $(instinct3solar45mm.resourcePath);resources-low-memory
+instinctcrossoveramoled.excludeAnnotations = $(instinctcrossoveramoled.excludeAnnotations);rectangle;noscaledbitmap;$(highMemExcludes)
+instinctcrossoveramoled.resourcePath = $(instinctcrossoveramoled.resourcePath);resources-high-memory
+instincte40mm.excludeAnnotations = $(instincte40mm.excludeAnnotations);rectangle;noscaledbitmap;$(lowMemExcludes)
+instincte40mm.resourcePath = $(instincte40mm.resourcePath);resources-low-memory
+instincte45mm.excludeAnnotations = $(instincte45mm.excludeAnnotations);rectangle;noscaledbitmap;$(lowMemExcludes)
+instincte45mm.resourcePath = $(instincte45mm.resourcePath);resources-low-memory

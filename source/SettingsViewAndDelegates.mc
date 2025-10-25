@@ -550,8 +550,8 @@ function alertsCommon(menu as WatchUi.Menu2, settings as Settings) as Void {
         case ALERT_TYPE_TOAST:
             alertTypeString = Rez.Strings.alertTypeToast;
             break;
-        case ALERT_TYPE_ALERT:
-            alertTypeString = Rez.Strings.alertTypeAlert;
+        case 1 /*ALERT_TYPE_ALERT*/:
+            alertTypeString = Rez.Strings.alertTypeImage; // we display it as an image instead of datafield alert
             break;
         case ALERT_TYPE_IMAGE:
             alertTypeString = Rez.Strings.alertTypeImage;
@@ -1274,8 +1274,6 @@ class SettingsAlertTypeDelegate extends WatchUi.Menu2InputDelegate {
         var itemId = item.getId();
         if (itemId == :settingsAlertTypeToast) {
             settings.setAlertType(ALERT_TYPE_TOAST);
-        } else if (itemId == :settingsAlertTypeAlert) {
-            settings.setAlertType(ALERT_TYPE_ALERT);
         } else if (itemId == :settingsAlertTypeImage) {
             settings.setAlertType(ALERT_TYPE_IMAGE);
         }

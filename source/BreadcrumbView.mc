@@ -10,14 +10,9 @@ import Toybox.System;
 typedef Alert as interface {
     function text() as String;
     function onUpdate(dc as Dc) as Void;
-    function alert() as WatchUi.DataFieldAlert;
 };
 
-class OffTrackAlert extends WatchUi.DataFieldAlert {
-    function initialize() {
-        WatchUi.DataFieldAlert.initialize();
-    }
-
+class OffTrackAlert {
     function onUpdate(dc as Dc) as Void {
         var halfWidth = dc.getWidth() * 0.5;
         var offTrackIcon =
@@ -36,17 +31,9 @@ class OffTrackAlert extends WatchUi.DataFieldAlert {
     function text() as String {
         return "OFF TRACK";
     }
-
-    function alert() as WatchUi.DataFieldAlert {
-        return me;
-    }
 }
 
-class WrongDirectionAlert extends WatchUi.DataFieldAlert {
-    function initialize() {
-        WatchUi.DataFieldAlert.initialize();
-    }
-
+class WrongDirectionAlert {
     function onUpdate(dc as Dc) as Void {
         // todo maybe save this as a bitmap to save space? are bitmaps more code-space efficient than the dc calls?
 
@@ -89,19 +76,14 @@ class WrongDirectionAlert extends WatchUi.DataFieldAlert {
     function text() as String {
         return "WRONG DIRECTION";
     }
-
-    function alert() as WatchUi.DataFieldAlert {
-        return me;
-    }
 }
 
-class DirectionAlert extends WatchUi.DataFieldAlert {
+class DirectionAlert {
     var direction as Number; // -180 to +180 deg
     var distanceM as Float;
     var distanceImperialUnits as Boolean;
 
     function initialize(direction as Number, distanceM as Float, distanceImperialUnits as Boolean) {
-        WatchUi.DataFieldAlert.initialize();
         self.direction = direction;
         self.distanceM = distanceM;
         self.distanceImperialUnits = distanceImperialUnits;
@@ -189,10 +171,6 @@ class DirectionAlert extends WatchUi.DataFieldAlert {
         }
 
         return dirText + " Turn In " + distanceText + " " + absN(direction) + "°";
-    }
-
-    function alert() as WatchUi.DataFieldAlert {
-        return me;
     }
 }
 
@@ -301,12 +279,10 @@ class BreadcrumbView extends WatchUi.View {
 
             // alert comes after we start the vibrate in case it throws
             // logD("trying to trigger alert");
-            if (settings.alertType == ALERT_TYPE_ALERT) {
-                // alerts are really annoying because users have to remember to enable them
-                // and then some times ive noticed that they do not seem to work, or they are disabled and still lock out the screen
-                // this is why we default to toasts, the vibration will still occur, and maybe should be a separate setting?
-                showAlert(alert.alert());
-            } else if (settings.alertType == ALERT_TYPE_IMAGE) {
+            if (
+                settings.alertType == ALERT_TYPE_IMAGE ||
+                settings.alertType == 1 /*show image instead of datafield alert ALERT_TYPE_ALERT */
+            ) {
                 imageAlertShowAt = Time.now().value();
                 imageAlert = alert;
             } else {
