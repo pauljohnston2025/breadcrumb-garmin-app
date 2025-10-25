@@ -141,6 +141,17 @@ class BreadcrumbRenderer {
         _downArrow = WatchUi.loadResource(Rez.Drawables.DownArrow) as WatchUi.BitmapResource;
     }
 
+    function sortKeys(keys as Array<Number>) as Void {
+        if (keys has :sort) {
+            (keys as Array).sort(null);
+            return;
+        }
+
+        // well i guess we have to prey they are in order for older devices
+        // because array.sort only exists in api >5.0.0
+        // todo crude sort here
+    }
+
     function getScaleSizeGeneric(
         scale as Float,
         desiredWidth as Float,
@@ -149,7 +160,7 @@ class BreadcrumbRenderer {
         // get the closest without going over
         // keys loads them in random order, we want the smallest first
         var keys = scaleNames.keys();
-        keys.sort(null);
+        sortKeys(keys);
         var foundDistanceKey = keys[0];
         var foundPixelWidth = 0f;
         for (var i = 0; i < keys.size(); ++i) {

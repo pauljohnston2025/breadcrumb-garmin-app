@@ -1181,6 +1181,7 @@ class SettingsPackingFormatDelegate extends WatchUi.Menu2InputDelegate {
     }
 }
 
+(:noMenu2)
 class SettingsMapAttributionDelegate extends WatchUi.Menu2InputDelegate {
     function initialize() {
         WatchUi.Menu2InputDelegate.initialize();

@@ -125,17 +125,6 @@ class BreadcrumbApp extends Application.AppBase {
         return [_view, new BreadcrumbDelegate(_breadcrumbContext)];
     }
 
-    (:noSettingsView)
-    function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
-        return [new $.Rez.Menus.SettingsMapAttribution(), new $.SettingsMapAttributionDelegate()];
-    }
-
-    (:settingsView)
-    function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
-        var settings = new $.SettingsMain();
-        return [settings, new $.SettingsMainDelegate(settings)];
-    }
-
     function onPhone(msg as Communications.PhoneAppMessage) as Void {
         try {
             var data = msg.data as Array?;

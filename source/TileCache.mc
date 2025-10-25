@@ -18,6 +18,7 @@ enum /*TileDataType*/ {
     TILE_DATA_TYPE_BLACK_AND_WHITE = 2,
 }
 
+(:byteArray)
 function tileKeyHash(x as Number, y as Number, z as Number) as String {
     var string = x.toString() + "-" + y + "-" + z;
 
@@ -47,6 +48,11 @@ function tileKeyHash(x as Number, y as Number, z as Number) as String {
             :encoding => StringUtil.CHAR_ENCODING_UTF8,
         }) as String
     );
+}
+
+(:noByteArray)
+function tileKeyHash(x as Number, y as Number, z as Number) as String {
+    return x.toString() + "-" + y + "-" + z;
 }
 
 const NO_EXPIRY = -1;

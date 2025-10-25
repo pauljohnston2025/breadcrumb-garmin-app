@@ -202,7 +202,7 @@ class BreadcrumbView extends WatchUi.View {
     function initialize(breadcrumbContext as BreadcrumbContext) {
         _breadcrumbContext = breadcrumbContext;
         _scratchPadBitmap = null;
-        DataField.initialize();
+        WatchUi.View.initialize();
         settings = _breadcrumbContext.settings;
         _cachedValues = _breadcrumbContext.cachedValues;
     }
@@ -498,6 +498,7 @@ class BreadcrumbView extends WatchUi.View {
         _lastFullRenderTime = 0; // map panning needs to redraw map immediately
     }
 
+    (:bufferedBitmap40)
     function updateScratchPadBitmap() as Void {
         try {
             if (
@@ -518,12 +519,42 @@ class BreadcrumbView extends WatchUi.View {
                     _scratchPadBitmap = newBitmap(width, height);
                 }
             } else {
-                _scratchPadBitmap = null; // settigns have disabled it - clean up after ourselves on next render
+                _scratchPadBitmap = null; // settings have disabled it - clean up after ourselves on next render
             }
         } catch (e) {
             logE("failed to allocate buffered bitmap: " + e.getErrorMessage());
             ++$.globalExceptionCounter;
         }
+    }
+
+    (:bufferedBitmap23,:bufferedRenderMode)
+    function updateScratchPadBitmap() as Void {
+        try {
+            if (
+                settings.renderMode == RENDER_MODE_BUFFERED_ROTATING ||
+                settings.renderMode == RENDER_MODE_BUFFERED_NO_ROTATION
+            ) {
+                // make sure we are at the correct size (settings/layout change at any point)
+                // could optimise this to be done in cached values rather than every render
+                var width = _cachedValues.maxVirtualScreenDim.toNumber();
+                var height = _cachedValues.maxVirtualScreenDim.toNumber();
+                if (_scratchPadBitmap == null) {
+                    _scratchPadBitmap = null; // null out the old one first, otherwise we have 2 bit bitmaps allocated at the same time
+                    // assuming garbage collection will run immediately, or when trying to allocate the next it will clean up the old one
+                    _scratchPadBitmap = newBitmap(width, height);
+                }
+            } else {
+                _scratchPadBitmap = null; // settings have disabled it - clean up after ourselves on next render
+            }
+        } catch (e) {
+            logE("failed to allocate buffered bitmap: " + e.getErrorMessage());
+            ++$.globalExceptionCounter;
+        }
+    }
+
+    (:bufferedBitmap23,:noBufferedRenderMode)
+    function updateScratchPadBitmap() as Void {
+        _scratchPadBitmap = null;
     }
 
     // did some testing on real device
@@ -713,15 +744,7 @@ class BreadcrumbView extends WatchUi.View {
 
             try {
                 if (settings.renderMode == RENDER_MODE_BUFFERED_ROTATING) {
-                    dc.drawBitmap2(0, 0, scratchPadBitmapLocal, {
-                        // :bitmapX =>
-                        // :bitmapY =>
-                        // :bitmapWidth =>
-                        // :bitmapHeight =>
-                        // :tintColor =>
-                        // :filterMode =>
-                        :transform => _cachedValues.rotationMatrix,
-                    });
+                    drawAndRotate(dc, scratchPadBitmapLocal);
                 } else {
                     // todo make buffered no rotation mode have a smaller buffer size (we can draw to it the same as dc if its set to the physical screen size)
                     dc.drawBitmap(
@@ -741,6 +764,24 @@ class BreadcrumbView extends WatchUi.View {
 
         // RENDER_MODE_UNBUFFERED_NO_ROTATION
         rederUnrotated(dc, routes, track);
+    }
+
+    (:affineTransform)
+    function drawAndRotate(dc as Dc, scratchPadBitmapLocal as BufferedBitmap) as Void {
+        dc.drawBitmap2(0, 0, scratchPadBitmapLocal, {
+            // :bitmapX =>
+            // :bitmapY =>
+            // :bitmapWidth =>
+            // :bitmapHeight =>
+            // :tintColor =>
+            // :filterMode =>
+            :transform => _cachedValues.rotationMatrix,
+        });
+    }
+
+    (:noAffineTransform)
+    function drawAndRotate(dc as Dc, scratchPadBitmapLocal as BufferedBitmap) as Void {
+        unsupported(dc, "rotation");
     }
 
     (:noUnbufferedRotations)

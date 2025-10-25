@@ -137,6 +137,7 @@ class CachedValues {
     var mapBitmapOffsetY as Float = 0f;
     var rotateAroundMinScreenDim as Float = -1f;
     var rotateAroundMaxScreenDim as Float = -1f;
+    (:affineTransform)
     var rotationMatrix as AffineTransform = new AffineTransform();
 
     // map related fields updated whenever scale changes
@@ -598,6 +599,7 @@ class CachedValues {
         updateRotationMatrix();
     }
 
+    (:affineTransform)
     function updateRotationMatrix() as Void {
         rotationMatrix = new AffineTransform();
         rotationMatrix.translate(rotateAroundScreenX, rotateAroundScreenY); // move to center
@@ -606,6 +608,10 @@ class CachedValues {
             -rotateAroundScreenXOffsetFactoredIn,
             -rotateAroundScreenYOffsetFactoredIn
         ); // move back to position
+    }
+    
+    (:noAffineTransform)
+    function updateRotationMatrix() as Void {
     }
 
     function calculateScale(maxDistanceM as Float) as Float {
