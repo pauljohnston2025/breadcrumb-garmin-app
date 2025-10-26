@@ -101,7 +101,7 @@ class CachedValues {
 
     // updated whenever we change zoom level (speed changes, zoom at pace mode etc.)
     var centerPosition as RectangularPoint = new RectangularPoint(0f, 0f, 0f); // scaled to pixels
-    var currentScale as Float = 0.0; // pixels per meter so <pixel count> / _currentScale = meters  or  meters * _currentScale = pixels
+    var currentScale as Float = 0.0f; // pixels per meter so <pixel count> / _currentScale = meters  or  meters * _currentScale = pixels
     // will be changed whenever scale is adjusted, falls back to metersAroundUser when no scale
     var mapMoveDistanceM as Float = -1f;
 

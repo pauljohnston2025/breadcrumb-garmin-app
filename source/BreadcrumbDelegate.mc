@@ -5,10 +5,95 @@ import Toybox.Lang;
 // see BreadcrumbDataFieldView if touch stops working
 class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     var _breadcrumbContext as BreadcrumbContext;
+    private var _dragStartX as Number? = null;
+    private var _dragStartY as Number? = null;
 
     function initialize(breadcrumbContext as BreadcrumbContext) {
         BehaviorDelegate.initialize();
         _breadcrumbContext = breadcrumbContext;
+    }
+
+    // onDrag is called when the user drags their finger across the screen
+    // Handle map panning when the user drags their finger across the screen.
+    function onDrag(dragEvent as WatchUi.DragEvent) as Lang.Boolean {
+        System.println("onDrag: " + dragEvent.getType());
+        // Only handle drag events if we are in map move mode.
+        if (_breadcrumbContext.settings.mode != MODE_MAP_MOVE) {
+            return false;
+        }
+
+        var eventType = dragEvent.getType();
+        var coords = dragEvent.getCoordinates();
+
+        if (eventType == WatchUi.DRAG_TYPE_START) {
+            // The user has started dragging. Record the initial coordinates.
+            _dragStartX = coords[0];
+            _dragStartY = coords[1];
+        } else if (eventType == WatchUi.DRAG_TYPE_CONTINUE) {
+            // The user is continuing a drag.
+            // Safety check to ensure we have a starting point.
+            var _dragStartXLocal = _dragStartX;
+            var _dragStartYLocal = _dragStartY;
+            if (_dragStartXLocal == null || _dragStartYLocal == null) {
+                // some invalid state
+                return true;
+            }
+
+            var cachedValues = _breadcrumbContext.cachedValues;
+
+            // Calculate the distance dragged in pixels since the last event.
+            var dx = (coords[0] as Number) - _dragStartXLocal;
+            var dy = (coords[1] as Number) - _dragStartYLocal;
+
+            // Update the stored coordinates to be the current point for the next continue event.
+            _dragStartX = coords[0];
+            _dragStartY = coords[1];
+
+            var currentScale = cachedValues.currentScale;
+            // Avoid division by zero if scale is not set.
+            if (currentScale == 0.0f) {
+                return true;
+            }
+
+            // Convert the pixel movement to meters using the current scale.
+            var xMoveUnrotatedMeters = -dx / currentScale;
+            var yMoveUnrotatedMeters = dy / currentScale;
+
+            // Calculate the rotated movement to account for map orientation.
+            var xMoveRotatedMeters =
+                xMoveUnrotatedMeters * cachedValues.rotateCos +
+                yMoveUnrotatedMeters * cachedValues.rotateSin;
+            var yMoveRotatedMeters =
+                -(xMoveUnrotatedMeters * cachedValues.rotateSin) +
+                yMoveUnrotatedMeters * cachedValues.rotateCos;
+
+            // Apply the calculated movement to the map's fixed position.
+            cachedValues.moveLatLong(
+                xMoveUnrotatedMeters,
+                yMoveUnrotatedMeters,
+                xMoveRotatedMeters,
+                yMoveRotatedMeters
+            );
+        } else if (eventType == WatchUi.DRAG_TYPE_STOP) {
+            // The user has stopped dragging. Reset the state variables.
+            _dragStartX = null;
+            _dragStartY = null;
+        }
+
+        return true;
+    }
+
+    function onFlick(flickEvent as WatchUi.FlickEvent) as Lang.Boolean {
+        var direction = flickEvent.getDirection();
+        System.println("Flick event deg: " + direction);
+
+        return false; // let it propagate
+    }
+
+    function onSwipe(swipeEvent) {
+        // prevent exit when we flick instead of drag
+        System.println("onSwipe: " + swipeEvent.getDirection());
+        return true; // this has to be true to prevent the default onback handler (that quits the app)
     }
 
     // see BreadcrumbDataFieldView if touch stops working
@@ -172,14 +257,26 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
             }
 
             return true;
+        } else if (key == WatchUi.KEY_ESC) {
+            if (_breadcrumbContext.session.isRecording()) {
+                pauseAndConfirmExit(_breadcrumbContext);
+                return true;
+            }
+
+            return false;
         }
 
         return false;
     }
 
     function onPreviousPage() as Boolean {
-        var settings = _breadcrumbContext.settings;
+        System.println("onPreviousPage");
         var cachedValues = _breadcrumbContext.cachedValues;
+        if (cachedValues.isTouchScreen) {
+            // they should be pressing the screen, drag events are handled for map panning
+            return false;  // let it propagate
+        }
+        var settings = _breadcrumbContext.settings;
         var renderer = _breadcrumbContext.breadcrumbRenderer;
 
         if (settings.mode == MODE_MAP_MOVE) {
@@ -191,8 +288,13 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     }
 
     function onNextPage() as Boolean {
-        var settings = _breadcrumbContext.settings;
+        System.println("onNextPage");
         var cachedValues = _breadcrumbContext.cachedValues;
+        if (cachedValues.isTouchScreen) {
+            // they should be pressing the screen, drag events are handled for map panning
+            return false;  // let it propagate
+        }
+        var settings = _breadcrumbContext.settings;
         var renderer = _breadcrumbContext.breadcrumbRenderer;
 
         if (settings.mode == MODE_MAP_MOVE) {
@@ -204,12 +306,10 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     }
 
     public function onBack() as Boolean {
-        if (_breadcrumbContext.session.isRecording()) {
-            pauseAndConfirmExit(_breadcrumbContext);
-            return true;
-        }
-
-        return false;
+        // touchscreens swipe right to call onback, prevent this, as we only want it to happen on key press
+        // the swipe could be from a map pan drag and get misinterpreted as an onback
+        System.println("onBack");
+        return false; // let it propagate to the onKey handler
     }
 }
 
@@ -239,7 +339,6 @@ class ExitMenuDelegate extends WatchUi.Menu2InputDelegate {
             // 2. Resume the session recording.
             _breadcrumbContext.startSession();
             WatchUi.showToast("Resumed", null);
-
         } else if (itemId == :saveAndExit) {
             // User wants to save and exit the app.
             // 1. Call your existing helper to save the session.
@@ -250,7 +349,6 @@ class ExitMenuDelegate extends WatchUi.Menu2InputDelegate {
             // Since the menu is on top, we pop it first, then the main app view.
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-
         } else if (itemId == :exitWithoutSaving) {
             // User wants to discard the activity.
             // 1. We need a helper to discard the session (see step 3).
@@ -263,4 +361,3 @@ class ExitMenuDelegate extends WatchUi.Menu2InputDelegate {
         }
     }
 }
-
