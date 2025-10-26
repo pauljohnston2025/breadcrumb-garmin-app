@@ -1293,6 +1293,10 @@ class BreadcrumbRenderer {
     function renderTileCacheButton(dc as Dc) as Void {}
     (:storage)
     function renderTileCacheButton(dc as Dc) as Void {
+        if (!_cachedValues.isTouchScreen) {
+            return;
+        }
+
         var physicalScreenWidth = _cachedValues.physicalScreenWidth; // local lookup faster
         var yHalfPhysical = _cachedValues.yHalfPhysical; // local lookup faster
 
@@ -1413,14 +1417,16 @@ class BreadcrumbRenderer {
             return;
         }
 
-        // clear routes
-        dc.drawText(
-            clearRouteX,
-            clearRouteY,
-            Graphics.FONT_XTINY,
-            "C",
-            Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
-        );
+        if (_cachedValues.isTouchScreen) {
+            // clear routes
+            dc.drawText(
+                clearRouteX,
+                clearRouteY,
+                Graphics.FONT_XTINY,
+                "C",
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+            );
+        }
 
         if (settings.mode == MODE_ELEVATION) {
             return;
@@ -1501,17 +1507,19 @@ class BreadcrumbRenderer {
 
         if (settings.mode == MODE_MAP_MOVE) {
             try {
-                dc.drawBitmap2(0, yHalfPhysical - _leftArrow.getHeight() / 2, _leftArrow, {
-                    :tintColor => settings.uiColour,
-                });
-                dc.drawBitmap2(
-                    physicalScreenWidth - _rightArrow.getWidth(),
-                    yHalfPhysical - _rightArrow.getHeight() / 2,
-                    _rightArrow,
-                    {
+                if (_cachedValues.isTouchScreen) {
+                    dc.drawBitmap2(0, yHalfPhysical - _leftArrow.getHeight() / 2, _leftArrow, {
                         :tintColor => settings.uiColour,
-                    }
-                );
+                    });
+                    dc.drawBitmap2(
+                        physicalScreenWidth - _rightArrow.getWidth(),
+                        yHalfPhysical - _rightArrow.getHeight() / 2,
+                        _rightArrow,
+                        {
+                            :tintColor => settings.uiColour,
+                        }
+                    );
+                }
                 dc.drawBitmap2(xHalfPhysical - _upArrow.getWidth() / 2, 0, _upArrow, {
                     :tintColor => settings.uiColour,
                 });

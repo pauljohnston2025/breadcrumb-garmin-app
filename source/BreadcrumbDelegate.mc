@@ -150,16 +150,25 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
 
     function onKey(keyEvent as WatchUi.KeyEvent) as Boolean {
         var key = keyEvent.getKey();
-        logT("got number picker key event: " + key);
+        logT("got key event: " + key);
         if (key == WatchUi.KEY_ENTER) {
             if (!_breadcrumbContext.session.isRecording()) {
                 // If we are NOT recording, start the session.
-                _breadcrumbContext.session.start();
+                _breadcrumbContext.startSession(); // resume the session
                 WatchUi.showToast("Activity Started", null);
             } else {
-                // If we ARE recording, stop and save the session.
-                // we need to force an exit when they confirm
-                pauseAndConfirmExit(_breadcrumbContext, true);
+                var cachedValues = _breadcrumbContext.cachedValues;
+                if (cachedValues.seeding()) {
+                    cachedValues.cancelCacheCurrentMapArea();
+                    return true;
+                }
+
+                // If recording, cycle through the main display modes. or return to user if we have moved/zoomed
+                if (cachedValues.fixedPosition != null || cachedValues.scale != null) {
+                    _breadcrumbContext.breadcrumbRenderer.returnToUser();
+                } else {
+                    _breadcrumbContext.settings.nextMode();
+                }
             }
 
             return true;
@@ -168,13 +177,35 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
         return false;
     }
 
-    // todo: currently start/stop is controlled by KEY_ENTER, just like in a datafield
-    // Will have to update this when we want to handle the on screen ui for non-touch devices
-    // need some cursor on screen or something, or just make zoomin/out the only allowed function for those devices?
+    function onPreviousPage() as Boolean {
+        var settings = _breadcrumbContext.settings;
+        var cachedValues = _breadcrumbContext.cachedValues;
+        var renderer = _breadcrumbContext.breadcrumbRenderer;
+
+        if (settings.mode == MODE_MAP_MOVE) {
+            cachedValues.moveFixedPositionUp();
+            return true;
+        }
+        renderer.incScale();
+        return true;
+    }
+
+    function onNextPage() as Boolean {
+        var settings = _breadcrumbContext.settings;
+        var cachedValues = _breadcrumbContext.cachedValues;
+        var renderer = _breadcrumbContext.breadcrumbRenderer;
+
+        if (settings.mode == MODE_MAP_MOVE) {
+            cachedValues.moveFixedPositionDown();
+        } else {
+            renderer.decScale();
+        }
+        return true;
+    }
+
     public function onBack() as Boolean {
         if (_breadcrumbContext.session.isRecording()) {
-            // we are already trying to exit, so don't kill the app
-            pauseAndConfirmExit(_breadcrumbContext, false);
+            pauseAndConfirmExit(_breadcrumbContext);
             return true;
         }
 
@@ -182,26 +213,21 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     }
 }
 
-function pauseAndConfirmExit(
-    breadcrumbContext as BreadcrumbContext,
-    killOnComplete as Boolean
-) as Void {
+function pauseAndConfirmExit(breadcrumbContext as BreadcrumbContext) as Void {
     var dialog = new WatchUi.Confirmation(
         WatchUi.loadResource(Rez.Strings.saveAndExitConfirm) as String
     );
 
-    var delegate = new SaveAndExitConfirmationDelegate(breadcrumbContext, killOnComplete);
+    var delegate = new SaveAndExitConfirmationDelegate(breadcrumbContext);
     WatchUi.pushView(dialog, delegate, WatchUi.SLIDE_IMMEDIATE);
 }
 
 class SaveAndExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
     var _breadcrumbContext as BreadcrumbContext;
-    var _killOnComplete as Boolean;
 
-    function initialize(context as BreadcrumbContext, killOnComplete as Boolean) {
+    function initialize(context as BreadcrumbContext) {
         ConfirmationDelegate.initialize();
         _breadcrumbContext = context;
-        _killOnComplete = killOnComplete;
         _breadcrumbContext.session.stop(); // pause the session
     }
 
@@ -212,7 +238,7 @@ class SaveAndExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE); // pop the activity from the view stack, this exits the app
         }
 
-        _breadcrumbContext.session.start(); // resume the session
+        _breadcrumbContext.startSession(); // resume the session
         return true; // We handled the response.
     }
 }

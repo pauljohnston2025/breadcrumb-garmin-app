@@ -123,6 +123,7 @@ class CachedValues {
     var yHalfPhysical as Float = physicalScreenHeight / 2f;
     var virtualScreenWidth as Float = System.getDeviceSettings().screenWidth.toFloat() as Float;
     var virtualScreenHeight as Float = System.getDeviceSettings().screenHeight.toFloat() as Float;
+    var isTouchScreen as Boolean = System.getDeviceSettings().isTouchScreen as Boolean;
     var minVirtualScreenDim as Float = -1f;
     var maxVirtualScreenDim as Float = -1f;
     var bufferedBitmapOffsetX as Float = -1f;

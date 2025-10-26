@@ -45,6 +45,10 @@ class BreadcrumbContext {
         createNewSession();
     }
 
+    function startSession() as Void {
+        session.start();
+        getApp()._view.onTimerStart();
+    }
     function stopAndSaveSession() as Void {
         // make sure we replace it once its stopped/saved, otherwise we get an error
         // Details: a class method was invoked on a Session that is no longer valid

@@ -366,6 +366,11 @@ class BreadcrumbView extends WatchUi.View {
             settings.setMapEnabled(false);
         }
 
+        if (!_breadcrumbContext.session.isRecording()) {
+            // we are paused, do not add any new track points, we still wan tto do the above stuff though, get all the tiles ready etc.
+            return;
+        }
+
         var newPoint = _breadcrumbContext.track.pointFromActivityInfo(info);
         if (newPoint != null) {
             if (_cachedValues.currentScale != 0f) {
