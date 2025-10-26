@@ -551,6 +551,18 @@ class BreadcrumbView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
         dc.clear();
 
+        if (!_breadcrumbContext.session.isRecording()) {
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                dc.getWidth() / 2,
+                dc.getHeight() / 2,
+                Graphics.FONT_MEDIUM,
+                "Press Start to Record",
+                Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER
+            );
+            return;
+        }
+
         var imageAlertLocal = imageAlert;
         if (imageAlertLocal != null) {
             var epoch = Time.now().value();

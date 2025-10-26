@@ -2093,6 +2093,7 @@ class Settings {
         showDirectionPointTextUnderIndex = defaultSettings.showDirectionPointTextUnderIndex;
         errorTileTTLS = defaultSettings.errorTileTTLS;
         fullTileSize = defaultSettings.fullTileSize;
+        parseSportAndSubSport(defaultSettings.activityType());
         scaledTileSize = defaultSettings.scaledTileSize;
         packingFormat = defaultSettings.packingFormat;
         useDrawBitmap = defaultSettings.useDrawBitmap;
@@ -2184,6 +2185,7 @@ class Settings {
                 "showDirectionPointTextUnderIndex" => showDirectionPointTextUnderIndex,
                 "errorTileTTLS" => errorTileTTLS,
                 "fullTileSize" => fullTileSize,
+                "activityType" => activityType(),
                 "scaledTileSize" => scaledTileSize,
                 "packingFormat" => packingFormat,
                 "useDrawBitmap" => useDrawBitmap,
@@ -2289,6 +2291,11 @@ class Settings {
 
     function saveSportAndSubSport() as Void {
         setValue("activityType", activityType());
+        sessionChanged();
+    }
+
+    function sessionChanged() as Void {
+        getApp()._breadcrumbContext.sessionChanged();
     }
 
     // todo split this off into setSport and setSubsport (then we can dynamically make the list for the menus and make them be able to pick a category then a sport in that category)
@@ -2492,6 +2499,8 @@ class Settings {
 
     function onSettingsChanged() as Void {
         logT("onSettingsChanged: Setting Changed, loading");
+        var oldSport = sport;
+        var oldSubSport = subSport;
         var oldRoutes = routes;
         var oldRouteMax = _routeMax;
         var oldMapChoice = mapChoice;
@@ -2532,6 +2541,10 @@ class Settings {
 
             // clear the route
             clearRouteFromContext(oldRouteId);
+        }
+
+        if (oldSport != sport || oldSubSport != subSport) {
+            sessionChanged();
         }
 
         if (oldRouteMax > _routeMax) {

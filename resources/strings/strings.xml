@@ -2,8 +2,11 @@
     <string id="AppName">BreadcrumbApp</string>
     <string id="settingsTitle">Breadcrumb App</string>
 
+    <string id="saveAndExitConfirm">Activity Paused.\nClick Yes to Save and Exit.</string>
+
+
     <string id="activityTypeTitle">Activity Type</string>
-    
+
      <!-- Generic -->
     <string id="ActGeneric">Generic</string>
     <!-- Running -->

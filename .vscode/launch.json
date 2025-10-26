@@ -9,8 +9,8 @@
             "request": "launch",
             "name": "Run App",
             "stopAtLaunch": false,
-            "device": "${command:GetTargetDevice}",
-            "releaseBuild": true
+            "device": "${command:GetTargetDevice}"
+            // "releaseBuild": true
         }
         // {
         //     "type": "omonkeyc",

@@ -5,6 +5,7 @@ import Toybox.Application;
 
 class BreadcrumbContext {
     var settings as Settings;
+    var session as ActivityRecording.Session; // we don't want to handle nulls, so make sure one always exists
     var cachedValues as CachedValues;
     var breadcrumbRenderer as BreadcrumbRenderer;
     var routes as Array<BreadcrumbTrack>;
@@ -16,6 +17,7 @@ class BreadcrumbContext {
     // Set the label of the data field here.
     function initialize() {
         settings = new Settings();
+        createNewSession();
         cachedValues = new CachedValues(settings);
 
         routes = [];
@@ -27,8 +29,33 @@ class BreadcrumbContext {
         mapRenderer = new MapRenderer(tileCache, settings, cachedValues);
     }
 
+    function createNewSession() {
+        session = ActivityRecording.createSession({
+            :name => "BreadcrumApp",
+            :sport => settings.sport as ActivityRecording.Sport,
+            :subSport => settings.subSport as ActivityRecording.SubSport,
+            // todo if type is pool, provide :poolLength setting
+        });
+    }
+    function sessionChanged() {
+        if (session.isRecording()) {
+            // we can't do much. Maybe we stop and start it? but then we get 2 activities.
+            return;
+        }
+        createNewSession();
+    }
+
+    function stopAndSaveSession() as Void {
+        // make sure we replace it once its stopped/saved, otherwise we get an error
+        // Details: a class method was invoked on a Session that is no longer valid
+        session.stop();
+        session.save();
+        createNewSession(); // create a new session for the next run
+    }
+
     function setup() as Void {
         settings.setup(); // we want to make sure everything is done later
+        sessionChanged();
         cachedValues.setup();
         tileCache.setup();
 
@@ -103,9 +130,7 @@ class BreadcrumbContext {
                 }
             }
             if (oldestOrFirstDisabledRoute == null) {
-                logE(
-                    "not possible (routes should be at least 1): " + settings.routeMax()
-                );
+                logE("not possible (routes should be at least 1): " + settings.routeMax());
                 return null;
             }
             routes.remove(oldestOrFirstDisabledRoute);

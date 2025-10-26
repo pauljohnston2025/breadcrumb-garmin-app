@@ -59,9 +59,9 @@ class SettingsSent extends Communications.ConnectionListener {
 // cat ./**/compiler.json | grep -E 'imageFormats|displayName' -A 5
 // looks like if it does not have a key for "imageFormats" the device only supports native formats and "Source must be native color format" if trying to use anything else.
 class BreadcrumbApp extends Application.AppBase {
-    var _session as ActivityRecording.Session? = null;
     var _breadcrumbContext as BreadcrumbContext;
     var _view as BreadcrumbView;
+    var timer = new Timer.Timer();
 
     var _commStatus as CommStatus = new CommStatus();
 
@@ -97,24 +97,12 @@ class BreadcrumbApp extends Application.AppBase {
             Communications.registerForPhoneAppMessages(method(:onPhone));
         }
 
-        // todo do this on button press and let user choose activity type
-        _session = ActivityRecording.createSession({
-            :name => "BreadcrumApp",
-            :sport => _breadcrumbContext.settings.sport as ActivityRecording.Sport,
-            :subSport => _breadcrumbContext.settings.subSport as ActivityRecording.SubSport,
-            // todo if type is pool, provide :poolLength setting
-        });
-
-        var myTimer = new Timer.Timer();
-        myTimer.start(method(:timerCallback), 1000, true);
+        (timer as Timer.Timer).start(method(:timerCallback), 1000, true);
     }
 
     // onStop() is called when your application is exiting
-
     function onStop(state as Dictionary?) as Void {
-        if (_session != null) {
-            _session.save();
-        }
+        timer.stop();
     }
 
     // Return the initial view of your application here
@@ -126,12 +114,12 @@ class BreadcrumbApp extends Application.AppBase {
     }
 
     (:noSettingsView)
-    function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
+    function getSettingsView() as [Views, InputDelegates] {
         return [new $.Rez.Menus.SettingsMain(), new $.SettingsMainDelegate()];
     }
 
     (:settingsView)
-    function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
+    function getSettingsView() as [Views, InputDelegates] {
         var settings = new $.SettingsMain();
         return [settings, new $.SettingsMainDelegate(settings)];
     }

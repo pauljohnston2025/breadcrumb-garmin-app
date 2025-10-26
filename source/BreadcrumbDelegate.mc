@@ -3,11 +3,11 @@ import Toybox.System;
 import Toybox.Lang;
 
 // see BreadcrumbDataFieldView if touch stops working
-class BreadcrumbDelegate extends WatchUi.InputDelegate {
+class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     var _breadcrumbContext as BreadcrumbContext;
 
     function initialize(breadcrumbContext as BreadcrumbContext) {
-        InputDelegate.initialize();
+        BehaviorDelegate.initialize();
         _breadcrumbContext = breadcrumbContext;
     }
 
@@ -136,5 +136,83 @@ class BreadcrumbDelegate extends WatchUi.InputDelegate {
         }
 
         return false;
+    }
+
+    public function onMenu() as Boolean {
+        var settingsView = getApp().getSettingsView();
+        WatchUi.pushView(settingsView[0], settingsView[1], WatchUi.SLIDE_IMMEDIATE);
+        return true;
+    }
+
+    // public function onSelect() as Boolean {
+    // onselect never seems to work on venu2s, but KEY_ENTER works on all products
+    // }
+
+    function onKey(keyEvent as WatchUi.KeyEvent) as Boolean {
+        var key = keyEvent.getKey();
+        logT("got number picker key event: " + key);
+        if (key == WatchUi.KEY_ENTER) {
+            if (!_breadcrumbContext.session.isRecording()) {
+                // If we are NOT recording, start the session.
+                _breadcrumbContext.session.start();
+                WatchUi.showToast("Activity Started", null);
+            } else {
+                // If we ARE recording, stop and save the session.
+                // we need to force an exit when they confirm
+                pauseAndConfirmExit(_breadcrumbContext, true);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // todo: currently start/stop is controlled by KEY_ENTER, just like in a datafield
+    // Will have to update this when we want to handle the on screen ui for non-touch devices
+    // need some cursor on screen or something, or just make zoomin/out the only allowed function for those devices?
+    public function onBack() as Boolean {
+        if (_breadcrumbContext.session.isRecording()) {
+            // we are already trying to exit, so don't kill the app
+            pauseAndConfirmExit(_breadcrumbContext, false);
+            return true;
+        }
+
+        return false;
+    }
+}
+
+function pauseAndConfirmExit(
+    breadcrumbContext as BreadcrumbContext,
+    killOnComplete as Boolean
+) as Void {
+    var dialog = new WatchUi.Confirmation(
+        WatchUi.loadResource(Rez.Strings.saveAndExitConfirm) as String
+    );
+
+    var delegate = new SaveAndExitConfirmationDelegate(breadcrumbContext, killOnComplete);
+    WatchUi.pushView(dialog, delegate, WatchUi.SLIDE_IMMEDIATE);
+}
+
+class SaveAndExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
+    var _breadcrumbContext as BreadcrumbContext;
+    var _killOnComplete as Boolean;
+
+    function initialize(context as BreadcrumbContext, killOnComplete as Boolean) {
+        ConfirmationDelegate.initialize();
+        _breadcrumbContext = context;
+        _killOnComplete = killOnComplete;
+        _breadcrumbContext.session.stop(); // pause the session
+    }
+
+    function onResponse(response as Confirm) as Boolean {
+        if (response == WatchUi.CONFIRM_YES) {
+            _breadcrumbContext.stopAndSaveSession();
+            WatchUi.showToast("Activity Saved", null);
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE); // pop the activity from the view stack, this exits the app
+        }
+
+        _breadcrumbContext.session.start(); // resume the session
+        return true; // We handled the response.
     }
 }
