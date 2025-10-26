@@ -2241,6 +2241,8 @@ class SettingsActivityTypeDelegate extends WatchUi.Menu2InputDelegate {
         var itemId = item.getId();
         var combinedValue = 0; // Default to Generic
 
+        if(itemId != null)
+        {
         // This switch statement maps the menu item ID back to the combined numeric value
         switch (itemId) {
             case :ActGeneric:
@@ -2687,6 +2689,7 @@ class SettingsActivityTypeDelegate extends WatchUi.Menu2InputDelegate {
             case :ActWakesurf:
                 combinedValue = 77000;
                 break;
+        }
         }
 
         // Call the new method in your settings class

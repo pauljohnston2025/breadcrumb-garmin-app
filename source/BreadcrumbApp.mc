@@ -1,9 +1,9 @@
-import Toybox.ActivityRecording;
 import Toybox.WatchUi;
 import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.Communications;
+import Toybox.Timer;
 
 var globalExceptionCounter as Number = 0;
 var sourceMustBeNativeColorFormatCounter as Number = 0;
@@ -61,7 +61,7 @@ class SettingsSent extends Communications.ConnectionListener {
 class BreadcrumbApp extends Application.AppBase {
     var _breadcrumbContext as BreadcrumbContext;
     var _view as BreadcrumbView;
-    var timer = new Timer.Timer();
+    var timer as Timer.Timer = new Timer.Timer();
 
     var _commStatus as CommStatus = new CommStatus();
 
@@ -97,7 +97,7 @@ class BreadcrumbApp extends Application.AppBase {
             Communications.registerForPhoneAppMessages(method(:onPhone));
         }
 
-        (timer as Timer.Timer).start(method(:timerCallback), 1000, true);
+        timer.start(method(:timerCallback), 1000, true);
     }
 
     // onStop() is called when your application is exiting
@@ -114,12 +114,12 @@ class BreadcrumbApp extends Application.AppBase {
     }
 
     (:noSettingsView)
-    function getSettingsView() as [Views, InputDelegates] {
+    function myGetSettingsView() as [Views, InputDelegates] {
         return [new $.Rez.Menus.SettingsMain(), new $.SettingsMainDelegate()];
     }
 
     (:settingsView)
-    function getSettingsView() as [Views, InputDelegates] {
+    function myGetSettingsView() as [Views, InputDelegates] {
         var settings = new $.SettingsMain();
         return [settings, new $.SettingsMainDelegate(settings)];
     }

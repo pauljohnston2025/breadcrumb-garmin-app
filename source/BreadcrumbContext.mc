@@ -1,3 +1,4 @@
+import Toybox.ActivityRecording;
 import Toybox.Position;
 import Toybox.Lang;
 import Toybox.Activity;
@@ -17,7 +18,12 @@ class BreadcrumbContext {
     // Set the label of the data field here.
     function initialize() {
         settings = new Settings();
-        createNewSession();
+        session = ActivityRecording.createSession({
+            :name => "BreadcrumApp",
+            :sport => ActivityRecording.SPORT_GENERIC,
+            :subSport => ActivityRecording.SUB_SPORT_GENERIC,
+            // todo if type is pool, provide :poolLength setting
+        });
         cachedValues = new CachedValues(settings);
 
         routes = [];
@@ -29,7 +35,7 @@ class BreadcrumbContext {
         mapRenderer = new MapRenderer(tileCache, settings, cachedValues);
     }
 
-    function createNewSession() {
+    function createNewSession() as Void {
         session = ActivityRecording.createSession({
             :name => "BreadcrumApp",
             :sport => settings.sport as ActivityRecording.Sport,
@@ -37,7 +43,7 @@ class BreadcrumbContext {
             // todo if type is pool, provide :poolLength setting
         });
     }
-    function sessionChanged() {
+    function sessionChanged() as Void {
         if (session.isRecording()) {
             // we can't do much. Maybe we stop and start it? but then we get 2 activities.
             return;

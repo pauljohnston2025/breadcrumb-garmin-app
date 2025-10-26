@@ -202,7 +202,7 @@ class BreadcrumbView extends WatchUi.View {
     function initialize(breadcrumbContext as BreadcrumbContext) {
         _breadcrumbContext = breadcrumbContext;
         _scratchPadBitmap = null;
-        DataField.initialize();
+        View.initialize();
         settings = _breadcrumbContext.settings;
         _cachedValues = _breadcrumbContext.cachedValues;
     }

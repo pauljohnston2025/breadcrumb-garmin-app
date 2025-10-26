@@ -139,7 +139,7 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     }
 
     public function onMenu() as Boolean {
-        var settingsView = getApp().getSettingsView();
+        var settingsView = getApp().myGetSettingsView();
         WatchUi.pushView(settingsView[0], settingsView[1], WatchUi.SLIDE_IMMEDIATE);
         return true;
     }
