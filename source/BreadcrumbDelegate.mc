@@ -354,13 +354,42 @@ class ExitMenuDelegate extends WatchUi.Menu2InputDelegate {
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         } else if (itemId == :exitWithoutSaving) {
             // User wants to discard the activity.
-            // 1. We need a helper to discard the session (see step 3).
+            var message = "Discard Activity?";
+            var confirmationView = new WatchUi.Confirmation(message);
+            var delegate = new DiscardConfirmationDelegate(_breadcrumbContext);
+
+            // Push the confirmation view to the user.
+            WatchUi.pushView(confirmationView, delegate, WatchUi.SLIDE_IMMEDIATE);
+        }
+    }
+}
+
+// A delegate to handle the response from a confirmation dialog.
+class DiscardConfirmationDelegate extends WatchUi.ConfirmationDelegate {
+    var _breadcrumbContext as BreadcrumbContext;
+
+    function initialize(context as BreadcrumbContext) {
+        ConfirmationDelegate.initialize();
+        _breadcrumbContext = context;
+    }
+
+    // This method is called when the user responds to the confirmation.
+    function onResponse(response as WatchUi.Confirm) as Boolean {
+        if (response == WatchUi.CONFIRM_YES) {
+            // The user confirmed they want to discard the activity.
+            // 1. Discard the session data.
             _breadcrumbContext.discardSession();
             WatchUi.showToast("Activity Discarded", null);
 
-            // 2. Exit the app completely.
+            // 2. Exit the app completely by popping both the menu
+            //    and the main view from the view stack.
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
             WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
         }
+        // If the user selects "No" (CONFIRM_NO), the system automatically
+        // pops the confirmation dialog, returning them to the previous menu.
+        // No further action is needed from us.
+
+        return true; // Indicate that we have handled the response.
     }
 }
