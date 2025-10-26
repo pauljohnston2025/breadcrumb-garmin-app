@@ -214,31 +214,53 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
 }
 
 function pauseAndConfirmExit(breadcrumbContext as BreadcrumbContext) as Void {
-    var dialog = new WatchUi.Confirmation(
-        WatchUi.loadResource(Rez.Strings.saveAndExitConfirm) as String
-    );
-
-    var delegate = new SaveAndExitConfirmationDelegate(breadcrumbContext);
-    WatchUi.pushView(dialog, delegate, WatchUi.SLIDE_IMMEDIATE);
+    breadcrumbContext.session.stop();
+    var menuView = new Rez.Menus.Exit();
+    var delegate = new ExitMenuDelegate(breadcrumbContext);
+    WatchUi.pushView(menuView, delegate, WatchUi.SLIDE_IMMEDIATE);
 }
 
-class SaveAndExitConfirmationDelegate extends WatchUi.ConfirmationDelegate {
+class ExitMenuDelegate extends WatchUi.Menu2InputDelegate {
     var _breadcrumbContext as BreadcrumbContext;
 
     function initialize(context as BreadcrumbContext) {
-        ConfirmationDelegate.initialize();
+        Menu2InputDelegate.initialize();
         _breadcrumbContext = context;
-        _breadcrumbContext.session.stop(); // pause the session
     }
 
-    function onResponse(response as Confirm) as Boolean {
-        if (response == WatchUi.CONFIRM_YES) {
+    // This function is called when the user selects an item from the menu.
+    public function onSelect(item as WatchUi.MenuItem) as Void {
+        var itemId = item.getId();
+
+        if (itemId == :resume) {
+            // User wants to resume.
+            // 1. Pop the menu off the screen.
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+            // 2. Resume the session recording.
+            _breadcrumbContext.startSession();
+            WatchUi.showToast("Resumed", null);
+
+        } else if (itemId == :saveAndExit) {
+            // User wants to save and exit the app.
+            // 1. Call your existing helper to save the session.
             _breadcrumbContext.stopAndSaveSession();
             WatchUi.showToast("Activity Saved", null);
-            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE); // pop the activity from the view stack, this exits the app
-        }
 
-        _breadcrumbContext.startSession(); // resume the session
-        return true; // We handled the response.
+            // 2. Exit the app completely by popping the main view.
+            // Since the menu is on top, we pop it first, then the main app view.
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+
+        } else if (itemId == :exitWithoutSaving) {
+            // User wants to discard the activity.
+            // 1. We need a helper to discard the session (see step 3).
+            _breadcrumbContext.discardSession();
+            WatchUi.showToast("Activity Discarded", null);
+
+            // 2. Exit the app completely.
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        }
     }
 }
+

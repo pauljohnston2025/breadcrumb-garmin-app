@@ -48,7 +48,7 @@ class BreadcrumbContext {
             // we can't do much. Maybe we stop and start it? but then we get 2 activities.
             return;
         }
-        createNewSession();
+        discardSession();
     }
 
     function startSession() as Void {
@@ -61,6 +61,14 @@ class BreadcrumbContext {
         session.stop();
         session.save();
         createNewSession(); // create a new session for the next run
+    }
+    function discardSession() as Void {
+        if (session.isRecording()) {
+            session.stop();
+        }
+        session.discard();
+        // Get ready for the next recording
+        createNewSession();
     }
 
     function setup() as Void {

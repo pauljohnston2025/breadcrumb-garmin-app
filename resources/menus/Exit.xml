@@ -1,0 +1,5 @@
+<menu2 id="Exit" title="@Strings.activityPaused">
+    <menu-item id="resume" label="@Strings.resume"/>
+    <menu-item id="saveAndExit" label="@Strings.saveAndExit"/>
+    <menu-item id="exitWithoutSaving" label="@Strings.exitWithoutSaving"/>
+</menu2>

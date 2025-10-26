@@ -2,7 +2,10 @@
     <string id="AppName">BreadcrumbApp</string>
     <string id="settingsTitle">Breadcrumb App</string>
 
-    <string id="saveAndExitConfirm">Activity Paused.\nClick Yes to Save and Exit.</string>
+    <string id="activityPaused">Activity Paused</string>
+    <string id="resume">Resume</string>
+    <string id="saveAndExit">Save And Exit</string>
+    <string id="exitWithoutSaving">Exit Without Saving</string>
 
 
     <string id="activityTypeTitle">Activity Type</string>
