@@ -18,7 +18,10 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
     function onDrag(dragEvent as WatchUi.DragEvent) as Lang.Boolean {
         System.println("onDrag: " + dragEvent.getType());
         // Only handle drag events if we are in map move mode.
-        if (_breadcrumbContext.settings.mode != MODE_MAP_MOVE) {
+        // we also allow it on the normal track page, since we can handle drag events in apps unlike on datafields.
+        // perhaps on touchscreen devices this should be the only way to move?
+        // it can be a bit finicky though, some users might still prefer the tapping interface (so ill leave both)
+        if (_breadcrumbContext.settings.mode != MODE_MAP_MOVE && _breadcrumbContext.settings.mode != MODE_NORMAL) {
             return false;
         }
 
