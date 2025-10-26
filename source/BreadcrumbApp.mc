@@ -99,10 +99,10 @@ class BreadcrumbApp extends Application.AppBase {
 
         // todo do this on button press and let user choose activity type
         _session = ActivityRecording.createSession({
-            // set up recording session
-            :name => "Generic", // set session name
-            :sport => Activity.SPORT_GENERIC, // set sport type
-            :subSport => Activity.SUB_SPORT_GENERIC, // set sub sport type
+            :name => "BreadcrumApp",
+            :sport => _breadcrumbContext.settings.sport as ActivityRecording.Sport,
+            :subSport => _breadcrumbContext.settings.subSport as ActivityRecording.SubSport,
+            // todo if type is pool, provide :poolLength setting
         });
 
         var myTimer = new Timer.Timer();
@@ -127,7 +127,7 @@ class BreadcrumbApp extends Application.AppBase {
 
     (:noSettingsView)
     function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
-        return [new $.Rez.Menus.SettingsMapAttribution(), new $.SettingsMapAttributionDelegate()];
+        return [new $.Rez.Menus.SettingsMain(), new $.SettingsMainDelegate()];
     }
 
     (:settingsView)

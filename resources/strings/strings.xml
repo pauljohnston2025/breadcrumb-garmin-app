@@ -2,6 +2,172 @@
     <string id="AppName">BreadcrumbApp</string>
     <string id="settingsTitle">Breadcrumb App</string>
 
+    <string id="activityTypeTitle">Activity Type</string>
+    
+     <!-- Generic -->
+    <string id="ActGeneric">Generic</string>
+    <!-- Running -->
+    <string id="ActRun">Running</string>
+    <string id="ActRunTreadmill">Running / Treadmill</string>
+    <string id="ActRunStreet">Running / Street</string>
+    <string id="ActRunTrail">Running / Trail</string>
+    <string id="ActRunTrack">Running / Track</string>
+    <string id="ActRunIndoor">Running / Indoor</string>
+    <string id="ActRunVirtual">Running / Virtual</string>
+    <string id="ActRunObstacle">Running / Obstacle</string>
+    <string id="ActRunUltra">Running / Ultra</string>
+    <!-- Cycling -->
+    <string id="ActCycle">Cycling</string>
+    <string id="ActCycleSpin">Cycling / Spin</string>
+    <string id="ActCycleIndoor">Cycling / Indoor</string>
+    <string id="ActCycleRoad">Cycling / Road</string>
+    <string id="ActCycleMtn">Cycling / Mountain</string>
+    <string id="ActCycleDownhill">Cycling / Downhill</string>
+    <string id="ActCycleRecumbent">Cycling / Recumbent</string>
+    <string id="ActCycleCyclocross">Cycling / Cyclocross</string>
+    <string id="ActCycleHand">Cycling / Hand</string>
+    <string id="ActCycleTrack">Cycling / Track</string>
+    <string id="ActCycleBmx">Cycling / BMX</string>
+    <string id="ActCycleGravel">Cycling / Gravel</string>
+    <string id="ActCycleCommute">Cycling / Commute</string>
+    <string id="ActCycleMixed">Cycling / Mixed Surface</string>
+    <!-- Transition -->
+    <string id="ActTransition">Transition</string>
+    <!-- Fitness Eq -->
+    <string id="ActFitness">Fitness Equipment</string>
+    <string id="ActFitRow">Fitness / Indoor Rowing</string>
+    <string id="ActFitElliptical">Fitness / Elliptical</string>
+    <string id="ActFitStair">Fitness / Stair Climbing</string>
+    <string id="ActFitStrength">Fitness / Strength</string>
+    <string id="ActFitCardio">Fitness / Cardio</string>
+    <string id="ActFitYoga">Fitness / Yoga</string>
+    <string id="ActFitPilates">Fitness / Pilates</string>
+    <string id="ActFitIndoorClimb">Fitness / Indoor Climbing</string>
+    <string id="ActFitBouldering">Fitness / Bouldering</string>
+    <!-- Swimming -->
+    <string id="ActSwim">Swimming</string>
+    <string id="ActSwimLap">Swimming / Lap</string>
+    <string id="ActSwimOpen">Swimming / Open Water</string>
+    <!-- Team/Ball Sports -->
+    <string id="ActBasketball">Basketball</string>
+    <string id="ActSoccer">Soccer</string>
+    <string id="ActTennis">Tennis</string>
+    <string id="ActFootballUS">American Football</string>
+    <string id="ActTraining">Training</string>
+    <!-- Walking -->
+    <string id="ActWalk">Walking</string>
+    <string id="ActWalkIndoor">Walking / Indoor</string>
+    <string id="ActWalkCasual">Walking / Casual</string>
+    <string id="ActWalkSpeed">Walking / Speed</string>
+    <!-- Winter -->
+    <string id="ActXcSki">XC Skiing</string>
+    <string id="ActXcSkiSkate">XC Skiing / Skate</string>
+    <string id="ActAlpineSki">Alpine Skiing</string>
+    <string id="ActAlpineSkiBack">Alpine Skiing / Backcountry</string>
+    <string id="ActAlpineSkiResort">Alpine Skiing / Resort</string>
+    <string id="ActSnowboard">Snowboarding</string>
+    <string id="ActSnowboardBack">Snowboarding / Backcountry</string>
+    <string id="ActSnowboardResort">Snowboarding / Resort</string>
+    <!-- Outdoor -->
+    <string id="ActRowing">Rowing</string>
+    <string id="ActMountaineering">Mountaineering</string>
+    <string id="ActHiking">Hiking</string>
+    <!-- Multisport -->
+    <string id="ActMulti">Multisport</string>
+    <string id="ActMultiTri">Multisport / Triathlon</string>
+    <string id="ActMultiDu">Multisport / Duathlon</string>
+    <string id="ActMultiBrick">Multisport / Brick</string>
+    <string id="ActMultiSwimrun">Multisport / Swimrun</string>
+    <string id="ActMultiAdvRace">Multisport / Adventure Race</string>
+    <!-- Various Outdoor/Motor -->
+    <string id="ActPaddling">Paddling</string>
+    <string id="ActFlying">Flying</string>
+    <string id="ActFlyingDrone">Flying / Drone</string>
+    <string id="ActEbike">E-Biking</string>
+    <string id="ActEbikeFit">E-Biking / Fitness</string>
+    <string id="ActEbikeMtn">E-Biking / Mountain</string>
+    <string id="ActMotorcycle">Motorcycling</string>
+    <string id="ActMotorcycleAtv">Motorcycling / ATV</string>
+    <string id="ActMotorcycleMx">Motorcycling / Motocross</string>
+    <string id="ActBoating">Boating</string>
+    <string id="ActBoatingSail">Boating / Sailing</string>
+    <string id="ActDriving">Driving</string>
+    <string id="ActGolf">Golf</string>
+    <string id="ActHangGliding">Hang Gliding</string>
+    <string id="ActHorseback">Horseback Riding</string>
+    <string id="ActHunting">Hunting</string>
+    <string id="ActFishing">Fishing</string>
+    <string id="ActInlineSkate">Inline Skating</string>
+    <string id="ActRockClimb">Rock Climbing</string>
+    <string id="ActRockClimbIndoor">Rock Climbing / Indoor</string>
+    <string id="ActRockClimbBoulder">Rock Climbing / Bouldering</string>
+    <string id="ActSailing">Sailing</string>
+    <string id="ActSailingRace">Sailing / Race</string>
+    <string id="ActIceSkate">Ice Skating</string>
+    <string id="ActIceSkateHockey">Ice Skating / Hockey</string>
+    <string id="ActSkyDiving">Sky Diving</string>
+    <string id="ActSkyDivingWingsuit">Sky Diving / Wingsuit</string>
+    <string id="ActSnowshoe">Snowshoeing</string>
+    <string id="ActSnowmobile">Snowmobiling</string>
+    <!-- Water -->
+    <string id="ActSup">Stand Up Paddleboarding</string>
+    <string id="ActSurfing">Surfing</string>
+    <string id="ActWakeboard">Wakeboarding</string>
+    <string id="ActWaterSki">Water Skiing</string>
+    <string id="ActKayak">Kayaking</string>
+    <string id="ActKayakWhite">Kayaking / Whitewater</string>
+    <string id="ActRafting">Rafting</string>
+    <string id="ActRaftingWhite">Rafting / Whitewater</string>
+    <string id="ActWindsurf">Windsurfing</string>
+    <string id="ActKitesurf">Kitesurfing</string>
+    <!-- Misc -->
+    <string id="ActTactical">Tactical</string>
+    <string id="ActJumpmaster">Jumpmaster</string>
+    <string id="ActBoxing">Boxing</string>
+    <string id="ActFloorClimb">Floor Climbing</string>
+    <string id="ActBaseball">Baseball</string>
+    <string id="ActSoftballFast">Softball (Fast Pitch)</string>
+    <string id="ActSoftballSlow">Softball (Slow Pitch)</string>
+    <string id="ActShooting">Shooting</string>
+    <string id="ActAutoRacing">Auto Racing</string>
+    <!-- Newer Additions -->
+    <string id="ActWinterSport">Winter Sport</string>
+    <string id="ActGrinding">Grinding</string>
+    <string id="ActHealthMon">Health Monitoring</string>
+    <string id="ActMarine">Marine</string>
+    <string id="ActHiit">HIIT</string>
+    <string id="ActHiitAmrap">HIIT / AMRAP</string>
+    <string id="ActHiitEmom">HIIT / EMOM</string>
+    <string id="ActHiitTabata">HIIT / Tabata</string>
+    <string id="ActGaming">Gaming</string>
+    <string id="ActGamingEsport">Gaming / Esport</string>
+    <string id="ActRacket">Racket Sports</string>
+    <string id="ActRacketPickle">Racket / Pickleball</string>
+    <string id="ActRacketPadel">Racket / Padel</string>
+    <string id="ActRacketSquash">Racket / Squash</string>
+    <string id="ActRacketBadminton">Racket / Badminton</string>
+    <string id="ActRacketRacquetball">Racket / Racquetball</string>
+    <string id="ActRacketTableTennis">Racket / Table Tennis</string>
+    <string id="ActWheelWalk">Wheelchair Walk</string>
+    <string id="ActWheelWalkIndoor">Wheelchair Walk / Indoor</string>
+    <string id="ActWheelRun">Wheelchair Run</string>
+    <string id="ActWheelRunIndoor">Wheelchair Run / Indoor</string>
+    <string id="ActMeditation">Meditation</string>
+    <string id="ActMeditationBreath">Meditation / Breathing</string>
+    <string id="ActParaSport">Para Sport</string>
+    <string id="ActDiscGolf">Disc Golf</string>
+    <string id="ActTeamSport">Team Sports</string>
+    <string id="ActTeamUltimate">Team Sports / Ultimate</string>
+    <string id="ActCricket">Cricket</string>
+    <string id="ActRugby">Rugby</string>
+    <string id="ActHockey">Hockey</string>
+    <string id="ActHockeyField">Hockey / Field</string>
+    <string id="ActHockeyIce">Hockey / Ice</string>
+    <string id="ActLacrosse">Lacrosse</string>
+    <string id="ActVolleyball">Volleyball</string>
+    <string id="ActTube">Water Tubing</string>
+    <string id="ActWakesurf">Wakesurfing</string>
+
     <string id="layerTileSize">Tile Size (pixels)</string>
     <string id="tileLayerMaxTitle">Tile Layer Max</string>
     <string id="tileLayerMaxPrompt">15</string>

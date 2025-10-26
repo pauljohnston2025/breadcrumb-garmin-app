@@ -13,6 +13,7 @@
 	<property id="mapEnabled" type="boolean">false</property>
 	<property id="mapChoice" type="number">0</property>
 	<property id="tileUrl" type="string">http://127.0.0.1:8080</property>
+	<property id="activityType" type="number">0</property>
 	<property id="authToken" type="string"></property>
 	<property id="tileSize" type="number">64</property>
 	<property id="fullTileSize" type="number">256</property>

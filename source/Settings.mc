@@ -322,6 +322,9 @@ class TileUpdateHandler {
 // * Reset sim app data and remove apps
 // * Works fine
 class Settings {
+    var sport as Number = Activity.SPORT_GENERIC;
+    var subSport as Number = Activity.SUB_SPORT_GENERIC;
+
     // todo only load these when needed (but cache them)
     (:imageTiles)
     var attributionImage as WatchUi.BitmapResource =
@@ -847,7 +850,7 @@ class Settings {
         // assert(tileUrl.equals(COMPANION_APP_TILE_URL));
 
         // if the users goes custom and has the companion app url, we still do not update the tiles layers
-        // this is because they may be artificially capping the tileLayerMax property eg. a tile server on the phone that has 20 layers, but the user only wants 
+        // this is because they may be artificially capping the tileLayerMax property eg. a tile server on the phone that has 20 layers, but the user only wants
         // 15 layers on the watch in order to be able to run offline tiles and store them all.
         if (mapChoice != 1) {
             // we are no longer on the companion app, abort
@@ -1491,7 +1494,7 @@ class Settings {
         routes = [];
         saveRoutes();
     }
-    
+
     function storageCleared() as Void {
         // routes are already cleared seperately through context
         safeSetStorage("lastMapChoice", mapChoice); // make sure we do not reload our map choice
@@ -1532,10 +1535,7 @@ class Settings {
         var toSave = routesToSave();
         // note toSave is Array<Dictionary<String, PropertyValueType>>
         // but the compiler only allows "Array<PropertyValueType>" even though the array of dicts seems to work on sim and real watch
-        safeSetStorage(
-            "routes",
-            toSave as Array<PropertyValueType>
-        );
+        safeSetStorage("routes", toSave as Array<PropertyValueType>);
     }
 
     (:settingsView)
@@ -2279,7 +2279,34 @@ class Settings {
         updateMapChoiceChange(mapChoice);
     }
 
+    function parseSportAndSubSport(combinedValue as Number) as Void {
+        // Decode the number back into sport and subSport
+        // Example: 1003 / 1000 = 1 (SPORT_RUNNING)
+        sport = combinedValue / 1000;
+        // Example: 1003 % 1000 = 3 (SUB_SPORT_TRAIL)
+        subSport = combinedValue % 1000;
+    }
+
+    function saveSportAndSubSport() as Void {
+        setValue("activityType", activityType());
+    }
+
+    // todo split this off into setSport and setSubsport (then we can dynamically make the list for the menus and make them be able to pick a category then a sport in that category)
+    // little gain doing that for now though
+    // and it will only work in on-watch settings
+    function setSportAndSubSport(combinedValue as Number) as Void {
+        parseSportAndSubSport(combinedValue);
+        saveSportAndSubSport();
+    }
+
+    function activityType() as Number {
+        return sport * 1000 + subSport;
+    }
+
     function loadSettingsPart1() as Void {
+        var activityType = parseNumber("activityType", 0);
+        parseSportAndSubSport(activityType);
+
         httpErrorTileTTLS = parseNumber("httpErrorTileTTLS", httpErrorTileTTLS);
         turnAlertTimeS = parseNumber("turnAlertTimeS", turnAlertTimeS);
         minTurnAlertDistanceM = parseNumber("minTurnAlertDistanceM", minTurnAlertDistanceM);
