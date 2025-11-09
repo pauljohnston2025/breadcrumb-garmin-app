@@ -8,6 +8,7 @@ using Toybox.Time;
 using Toybox.Time.Gregorian;
 
 const WRONG_DIRECTION_TOLERANCE_M = 2; // meters
+const SKIP_FORWARD_TOLERANCE_M = 0.1; // meters (needs to be kept small, see details at usage below)
 
 const TRACK_ID = -1;
 const MIN_DISTANCE_M = 5; // meters
@@ -928,8 +929,37 @@ class BreadcrumbTrack {
                                 nextSegmentNextY
                             );
 
+                            var currentScale =
+                                getApp()._breadcrumbContext.cachedValues.currentScale;
+                            var scaleMultiplier = currentScale;
+                            if (scaleMultiplier == 0f) {
+                                scaleMultiplier = 1f;
+                            }
+
                             // If we are closer to the next segment, use that one instead.
-                            if (distToNextSegmentAndPoint[0] < distToCurrentSegmentAndPoint[0]) {
+                            // eg. distToNextSegmentAndPoint[0] - distToCurrentSegmentAndPoint[0]
+                            //     20.5 - 20 = 0.5  // if its pretty close we can also use it, as long as its also less than distanceCheck eg. if it were 30 away it would be too far, but might still be less than the tolerance
+                            //     20 - 20.5 = -0.5 if its larger the values go negative - excellent we are closer
+                            // we cannot have too much of a tolerance though for out and back graphs, it could incorrectly jump forward many times (would also need high alert check interval)
+                            // eg.
+                            // x = track point
+                            //  x
+                            //  | \
+                            //  x  x
+                            //  |  |
+                            //  U
+                            //
+                            // As the user travels up the page on segment (1) they get closer to the 'x' point, which could jump forward to the next segment (2). If we check again instantly, it could jump forwards to the next segment (3), and then again jump to segment (4)
+                            // But the user is still traveling up the page, so when they actually reach segment (2) we then think they are going backwards in the wrong direction because we incorrectly jumped forwards to segments (2,3,4).
+                            // To prevent this we should choose larger values for check interval, and have a really small SKIP_FORWARD_TOLERANCE_M.
+                            // setting SKIP_FORWARD_TOLERANCE_M = 0 results in essentially the same old code 'distToNextSegmentAndPoint[0] <= distToCurrentSegmentAndPoint[0]' note: its '<=' and not just '<'. 
+                            // Checking just '<' can result in wrong direction alerts too because it will never switch to the second segment if they are colinear, and then look like we are going backwards.
+                            var compareDistance =
+                                distToNextSegmentAndPoint[0] - distToCurrentSegmentAndPoint[0];
+                            if (
+                                distToNextSegmentAndPoint[0] < distanceCheck &&
+                                compareDistance < SKIP_FORWARD_TOLERANCE_M * scaleMultiplier
+                            ) {
                                 return updateOffTrackInfo(
                                     i / ARRAY_POINT_SIZE, // Index of the next segment's START point
                                     checkPoint,

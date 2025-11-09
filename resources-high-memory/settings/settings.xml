@@ -204,6 +204,10 @@
     <setting propertyKey="@Properties.maxTrackPoints" title="@Strings.maxTrackPointsTitle">
         <settingConfig type="numeric" min="1"/>
     </setting>
+
+    <setting propertyKey="@Properties.mapMoveScreenSize" title="@Strings.mapMoveScreenSizeTitle">
+        <settingConfig type="numeric" min="0" max="1"/>
+    </setting>
     
     <!-- <group id="zoomAtPace" title="@Strings.zoomAtPaceTitle"> -->
         <setting propertyKey="@Properties.zoomAtPaceMode" title="@Strings.zoomAtPaceModeTitle">
@@ -231,10 +235,6 @@
     <!-- <group id="mapSettings" title="@Strings.mapsettingsTitle" enableIfTrue="@Properties.mapEnabled"> -->
         <setting propertyKey="@Properties.tileCacheSize" title="@Strings.tileCacheSizeTitle" prompt="@Strings.tileCacheSizePrompt">
             <settingConfig type="numeric" min="0"/>
-        </setting>
-
-        <setting propertyKey="@Properties.mapMoveScreenSize" title="@Strings.mapMoveScreenSizeTitle">
-            <settingConfig type="numeric" min="0" max="1"/>
         </setting>
 
         <setting propertyKey="@Properties.tileCachePadding" title="@Strings.tileCachePaddingTitle">

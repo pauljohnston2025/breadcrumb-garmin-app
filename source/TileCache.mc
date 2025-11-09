@@ -1542,6 +1542,7 @@ class TileCache {
         }
     }
 
+    (:companionTiles)
     function loadPalletFromWeb() as Void {
         // if we are still null after a load, we need to lad the palette from the tile server on the phone
         logD("loading TilePalette from web");

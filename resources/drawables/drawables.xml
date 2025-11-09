@@ -2,12 +2,6 @@
     <bitmap id="LauncherIcon" filename="launcher_icon.png" scaleX="61" scaleY="61"/>
     <bitmap id="ColourIcon" class="ColourIcon" filename="launcher_icon.png" automaticPalette="false" dithering="none" scaleX="15%" scaleRelativeTo="screen" packingFormat="default"/>
     <!-- online editor for svgs https://www.svgviewer.dev/ -->
-    <bitmap id="Crosshair" filename="crosshair.svg" automaticPalette="false" dithering="none" scaleX="50" scaleY="50" packingFormat="default"/>
-    <bitmap id="NoSmoking" filename="nosmoking.svg" automaticPalette="false" dithering="none" scaleX="20" scaleY="20" packingFormat="default"/>
-    <bitmap id="RightArrow" filename="rightarrow.svg" automaticPalette="false" dithering="none" scaleX="25" scaleY="25" packingFormat="default"/>
-    <bitmap id="LeftArrow" filename="leftarrow.svg" automaticPalette="false" dithering="none" scaleX="25" scaleY="25" packingFormat="default"/>
-    <bitmap id="UpArrow" filename="uparrow.svg" automaticPalette="false" dithering="none" scaleX="25" scaleY="25" packingFormat="default"/>
-    <bitmap id="DownArrow" filename="downarrow.svg" automaticPalette="false" dithering="none" scaleX="25" scaleY="25" packingFormat="default"/>
     <bitmap id="OpenTopMapAttribution" filename="opentopomap.svg" automaticPalette="false" dithering="none" scaleX="100" scaleY="20" packingFormat="default"/>
     <bitmap id="EsriAttribution" filename="esri.svg" automaticPalette="false" dithering="none" scaleX="100" scaleY="20" packingFormat="default"/>
     <bitmap id="OpenStreetMapAttribution" filename="openstreetmap.svg" automaticPalette="false" dithering="none" scaleX="100" scaleY="20" packingFormat="default"/>

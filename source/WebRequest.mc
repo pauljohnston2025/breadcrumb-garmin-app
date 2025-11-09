@@ -26,6 +26,8 @@ typedef WebRequest as interface {
 
     function start(webRequestHandler as WebRequestHandler, settings as Settings) as Void;
 };
+
+(:companionTiles)
 class JsonRequest {
     var url as String;
     var params as Dictionary;

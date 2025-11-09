@@ -62,6 +62,10 @@ Determines if the current latitude and longitude are displayed on the watch scre
 
 The maximum number of coordinates to store for the current track the user is moving along. Each coordinate point contains a latitude, longitude and altitude. A smaller number should be used to conserve memory and cpu. Larger numbers results in a smoother track line drawn on screen.   
 
+### Map Move Screen Size
+
+How far to move across the screen when panning the map using the on screen ui. Relative to screen size, eg. 0.3 moves a third of the screen, 0.5 moves half the screen.   
+
 ---
 
 ### UI Mode
@@ -249,10 +253,6 @@ How long to wait before querying errored tiles again, this is for valid htp erro
 
 How long to wait before querying errored tiles again, this is for garmin errors (ble unavailable, etc.)  
 garmin error codes are documented [here](https://developer.garmin.com/connect-iq/api-docs/Toybox/Communications.html#Error-module)
-
-### Map Move Screen Size
-
-How far to move across the screen when panning the map using the on screen ui. Relative to screen size, eg. 0.3 moves a third of the screen, 0.5 moves half the screen.   
 
 ---
 

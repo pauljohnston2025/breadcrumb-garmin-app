@@ -6,10 +6,15 @@ import Toybox.WatchUi;
 import Toybox.Communications;
 import Toybox.Graphics;
 
+const NO_SMOKING_RADIUS = 10.0f;
 const DESIRED_SCALE_PIXEL_WIDTH as Float = 100.0f;
 const DESIRED_ELEV_SCALE_PIXEL_WIDTH as Float = 50.0f;
 // note sure why this has anything to do with DESIRED_SCALE_PIXEL_WIDTH, should just be whatever tile layer 0 equates to for the screen size
 const MIN_SCALE as Float = DESIRED_SCALE_PIXEL_WIDTH / 1000000000.0f;
+
+const ARROW_SIZE = 20.0f;
+const ARROW_PEN_WIDTH = 2;
+const ARROW_WALL_OFFSET = 6.0f;
 
 class BreadcrumbRenderer {
     // todo put into ui class
@@ -19,108 +24,112 @@ class BreadcrumbRenderer {
     var _disableMapProgress as Number = 0;
     var settings as Settings;
     var _cachedValues as CachedValues;
-    var _crosshair as BitmapResource;
-    var _nosmoking as BitmapResource;
-    var _leftArrow as BitmapResource;
-    var _rightArrow as BitmapResource;
-    var _upArrow as BitmapResource;
-    var _downArrow as BitmapResource;
 
-    // units in mm (float/int) to label
-    var SCALE_NAMES as Dictionary<Number, String> =
-        ({
-            1000 => "1m",
-            5000 => "5m",
-            10000 => "10m",
-            20000 => "20m",
-            30000 => "30m",
-            40000 => "40m",
-            50000 => "50m",
-            100000 => "100m",
-            250000 => "250m",
-            500000 => "500m",
-            1000000 => "1km",
-            2000000 => "2km",
-            3000000 => "3km",
-            4000000 => "4km",
-            5000000 => "5km",
-            10000000 => "10km",
-            20000000 => "20km",
-            30000000 => "30km",
-            40000000 => "40km",
-            50000000 => "50km",
-            100000000 => "100km",
-            500000000 => "500km",
-            1000000000 => "1000km",
-            2000000000 => "2000km",
-        }) as Dictionary<Number, String>;
-
-    // yep the key of the array is in mm (they will never know, it will be our little secret)
-    var SCALE_NAMES_IMPERIAL as Dictionary<Number, String> =
-        ({
-            1524 => "5ft",
-            3048 => "10ft",
-            7620 => "25ft",
-            15240 => "50ft",
-            30480 => "100ft",
-            76200 => "250ft",
-            152400 => "500ft",
-            304800 => "1000ft",
-            804672 => "0.5mi",
-            1609344 => "1mi",
-            3218688 => "2mi",
-            8046720 => "5mi",
-            16093440 => "10mi",
-            32186880 => "20mi",
-            80467200 => "50mi",
-            160934400 => "100mi",
-            804672000 => "500mi",
-            1609344000 => "1000mi",
-        }) as Dictionary<Number, String>;
-
-    // we want much smaller elevation changes to be seen
-    // so elevation scales are in mm, not meters
-    var ELEVATION_SCALE_NAMES as Dictionary<Number, String> =
-        ({
-            // some rediculously small values for level ground (highly unlikely in the wild, but common on simulator)
-            1 => "1mm",
-            2 => "2mm",
-            5 => "5mm",
-            10 => "1cm",
-            25 => "2.5cm",
-            50 => "5cm",
-            100 => "10cm",
-            250 => "25cm",
-            500 => "50cm",
-            1000 => "1m",
-            5000 => "5m",
-            10000 => "10m",
-            20000 => "20m",
-            30000 => "30m",
-            40000 => "40m",
-            50000 => "50m",
-            100000 => "100m",
-            250000 => "250m",
-            500000 => "500m",
-        }) as Dictionary<Number, String>;
+    // units in mm (float/int)
+    const SCALE_KEYS as Array<Number> = [
+        1000, 5000, 10000, 20000, 30000, 40000, 50000, 100000, 250000, 500000, 1000000, 2000000,
+        3000000, 4000000, 5000000, 10000000, 20000000, 30000000, 40000000, 50000000, 100000000,
+        500000000, 1000000000, 2000000000,
+    ];
+    const SCALE_VALUES as Array<String> = [
+        "1m",
+        "5m",
+        "10m",
+        "20m",
+        "30m",
+        "40m",
+        "50m",
+        "100m",
+        "250m",
+        "500m",
+        "1km",
+        "2km",
+        "3km",
+        "4km",
+        "5km",
+        "10km",
+        "20km",
+        "30km",
+        "40km",
+        "50km",
+        "100km",
+        "500km",
+        "1000km",
+        "2000km",
+    ];
 
     // key is in mm
-    var ELEVATION_SCALE_NAMES_IMPERIAL as Dictionary<Number, String> =
-        ({
-            25 => "1in",
-            51 => "2in",
-            127 => "5in",
-            254 => "10in",
-            305 => "1ft",
-            1524 => "5ft",
-            3048 => "10ft",
-            6096 => "20ft",
-            15240 => "50ft",
-            30480 => "100ft",
-            76200 => "250ft",
-            152400 => "500ft",
-            304800 => "1000ft",
-        }) as Dictionary<Number, String>;
+    const SCALE_KEYS_IMPERIAL as Array<Number> = [
+        1524, 3048, 7620, 15240, 30480, 76200, 152400, 304800, 804672, 1609344, 3218688, 8046720,
+        16093440, 32186880, 80467200, 160934400, 804672000, 1609344000,
+    ];
+    const SCALE_VALUES_IMPERIAL as Array<String> = [
+        "5ft",
+        "10ft",
+        "25ft",
+        "50ft",
+        "100ft",
+        "250ft",
+        "500ft",
+        "1000ft",
+        "0.5mi",
+        "1mi",
+        "2mi",
+        "5mi",
+        "10mi",
+        "20mi",
+        "50mi",
+        "100mi",
+        "500mi",
+        "1000mi",
+    ];
+
+    // elevation scales are in mm
+    const ELEVATION_SCALE_KEYS as Array<Number> = [
+        1, 2, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000, 20000, 30000, 40000, 50000, 100000,
+        250000, 500000,
+    ];
+    const ELEVATION_SCALE_VALUES as Array<String> = [
+        "1mm",
+        "2mm",
+        "5mm",
+        "1cm",
+        "2.5cm",
+        "5cm",
+        "10cm",
+        "25cm",
+        "50cm",
+        "1m",
+        "5m",
+        "10m",
+        "20m",
+        "30m",
+        "40m",
+        "50m",
+        "100m",
+        "250m",
+        "500m",
+    ];
+
+    // key is in mm
+    const ELEVATION_SCALE_KEYS_IMPERIAL as Array<Number> = [
+        25, 51, 127, 254, 305, 1524, 3048, 6096, 15240, 30480, 76200, 152400, 304800,
+    ];
+    const ELEVATION_SCALE_VALUES_IMPERIAL as Array<String> = [
+        "1in",
+        "2in",
+        "5in",
+        "10in",
+        "1ft",
+        "5ft",
+        "10ft",
+        "20ft",
+        "50ft",
+        "100ft",
+        "250ft",
+        "500ft",
+        "1000ft",
+    ];
 
     // benchmark same track loaded (just render track no activity running) using
     // average time over 1min of benchmark
@@ -133,27 +142,31 @@ class BreadcrumbRenderer {
     function initialize(settings as Settings, cachedValues as CachedValues) {
         self.settings = settings;
         _cachedValues = cachedValues;
-        _crosshair = WatchUi.loadResource(Rez.Drawables.Crosshair) as WatchUi.BitmapResource;
-        _nosmoking = WatchUi.loadResource(Rez.Drawables.NoSmoking) as WatchUi.BitmapResource;
-        _leftArrow = WatchUi.loadResource(Rez.Drawables.LeftArrow) as WatchUi.BitmapResource;
-        _rightArrow = WatchUi.loadResource(Rez.Drawables.RightArrow) as WatchUi.BitmapResource;
-        _upArrow = WatchUi.loadResource(Rez.Drawables.UpArrow) as WatchUi.BitmapResource;
-        _downArrow = WatchUi.loadResource(Rez.Drawables.DownArrow) as WatchUi.BitmapResource;
+
+        if (
+            SCALE_KEYS.size() != SCALE_VALUES.size() ||
+            SCALE_KEYS_IMPERIAL.size() != SCALE_VALUES_IMPERIAL.size() ||
+            ELEVATION_SCALE_KEYS.size() != ELEVATION_SCALE_VALUES.size() ||
+            ELEVATION_SCALE_KEYS_IMPERIAL.size() != ELEVATION_SCALE_VALUES_IMPERIAL.size()
+        ) {
+            throw new Exception();
+        }
     }
 
     function getScaleSizeGeneric(
         scale as Float,
         desiredWidth as Float,
-        scaleNames as Dictionary<Number, String>
-    ) as [Float, Number] {
+        scaleKeys as Array<Number>,
+        scaleValues as Array<String>
+    ) as [Float, Number, String] {
         // get the closest without going over
-        // keys loads them in random order, we want the smallest first
-        var keys = scaleNames.keys();
-        keys.sort(null);
-        var foundDistanceKey = keys[0];
+        // The keys array is already sorted, so we get the first element as the default
+        var foundDistanceKey = scaleKeys[0];
+        var foundName = scaleValues[0];
         var foundPixelWidth = 0f;
-        for (var i = 0; i < keys.size(); ++i) {
-            var distanceKey = keys[i] as Number;
+
+        for (var i = 0; i < scaleKeys.size(); ++i) {
+            var distanceKey = scaleKeys[i];
             var testPixelWidth = (distanceKey.toFloat() / 1000) * scale;
             if (testPixelWidth > desiredWidth) {
                 break;
@@ -161,25 +174,27 @@ class BreadcrumbRenderer {
 
             foundPixelWidth = testPixelWidth;
             foundDistanceKey = distanceKey;
+            foundName = scaleValues[i];
         }
 
-        return [foundPixelWidth, foundDistanceKey];
+        return [foundPixelWidth, foundDistanceKey, foundName];
     }
 
     function renderCurrentScale(dc as Dc) as Void {
-        var scaleNames = settings.distanceImperialUnits ? SCALE_NAMES_IMPERIAL : SCALE_NAMES;
+        var scaleKeys = settings.distanceImperialUnits ? SCALE_KEYS_IMPERIAL : SCALE_KEYS;
+        var scaleValues = settings.distanceImperialUnits ? SCALE_VALUES_IMPERIAL : SCALE_VALUES;
         var scaleData = getScaleSizeGeneric(
             _cachedValues.currentScale,
             DESIRED_SCALE_PIXEL_WIDTH,
-            scaleNames
+            scaleKeys as Array<Number>,
+            scaleValues as Array<String>
         );
         var pixelWidth = scaleData[0];
-        var distanceM = scaleData[1];
+        var foundName = scaleData[2];
+
         if (pixelWidth == 0f) {
             return;
         }
-
-        var foundName = scaleNames[distanceM];
 
         var y = _cachedValues.physicalScreenHeight - 25;
         dc.setColor(settings.normalModeColour, Graphics.COLOR_TRANSPARENT);
@@ -589,6 +604,14 @@ class BreadcrumbRenderer {
         dc.drawLine(lastX, lastY, arm2EndX, arm2EndY);
     }
 
+    (:noUnbufferedRotations)
+    function renderTrackCheverons(
+        dc as Dc,
+        breadcrumb as BreadcrumbTrack,
+        colour as Graphics.ColorType
+    ) as Void {}
+
+    (:unbufferedRotations)
     function renderTrackCheverons(
         dc as Dc,
         breadcrumb as BreadcrumbTrack,
@@ -662,13 +685,6 @@ class BreadcrumbRenderer {
     }
 
     // function name is to keep consistency with other methods, the chverons themselves will be rotated
-    (:noUnbufferedRotations)
-    function renderTrackCheveronsUnrotated(
-        dc as Dc,
-        breadcrumb as BreadcrumbTrack,
-        colour as Graphics.ColorType
-    ) as Void {}
-    (:unbufferedRotations)
     function renderTrackCheveronsUnrotated(
         dc as Dc,
         breadcrumb as BreadcrumbTrack,
@@ -1453,22 +1469,27 @@ class BreadcrumbRenderer {
         var scaleFromEdge = 75; // guestimate
 
         if (_cachedValues.fixedPosition != null || _cachedValues.scale != null) {
-            try {
-                dc.drawBitmap2(
-                    returnToUserX - _crosshair.getWidth() / 2,
-                    returnToUserY - _crosshair.getHeight() / 2,
-                    _crosshair,
-                    {
-                        :tintColor => settings.uiColour,
-                    }
-                );
-            } catch (e) {
-                // not sure what this exception was see above
-                var message = e.getErrorMessage();
-                logE("failed drawBitmap2 (render ui): " + message);
-                ++$.globalExceptionCounter;
-                incNativeColourFormatErrorIfMessageMatches(message);
-            }
+            // crosshair
+            var centerX = returnToUserX;
+            var centerY = returnToUserY;
+            var halfSize = 25;
+
+            // Draw the outer circle and lines
+            dc.setPenWidth(2);
+
+            // Vertical line
+            dc.drawLine(centerX, centerY - halfSize, centerX, centerY + halfSize);
+            // Horizontal line
+            dc.drawLine(centerX - halfSize, centerY, centerX + halfSize, centerY);
+            // Outer circle (r=35)
+            dc.drawCircle(centerX, centerY, 18);
+
+            // Draw the middle circle
+            dc.setPenWidth(3);
+            dc.drawCircle(centerX, centerY, 12);
+
+            // Draw the inner, filled circle
+            dc.fillCircle(centerX, centerY, 7);
         }
 
         if (settings.displayLatLong) {
@@ -1506,48 +1527,57 @@ class BreadcrumbRenderer {
         }
 
         if (settings.mode == MODE_MAP_MOVE) {
-            try {
-                if (_cachedValues.isTouchScreen) {
-                    dc.drawBitmap2(0, yHalfPhysical - _leftArrow.getHeight() / 2, _leftArrow, {
-                        :tintColor => settings.uiColour,
-                    });
-                    dc.drawBitmap2(
-                        physicalScreenWidth - _rightArrow.getWidth(),
-                        yHalfPhysical - _rightArrow.getHeight() / 2,
-                        _rightArrow,
-                        {
-                            :tintColor => settings.uiColour,
-                        }
-                    );
-                }
-                dc.drawBitmap2(xHalfPhysical - _upArrow.getWidth() / 2, 0, _upArrow, {
-                    :tintColor => settings.uiColour,
-                });
-                if (settings.getAttribution() == null || !settings.mapEnabled) {
-                    dc.drawBitmap2(
-                        xHalfPhysical - _downArrow.getWidth() / 2,
-                        physicalScreenHeight - _downArrow.getHeight(),
-                        _downArrow,
-                        {
-                            :tintColor => settings.uiColour,
-                        }
-                    );
-                }
-            } catch (e) {
-                // not sure what this exception was see above
-                var message = e.getErrorMessage();
-                logE("failed drawBitmap2 (render ui 2): " + message);
-                ++$.globalExceptionCounter;
-                incNativeColourFormatErrorIfMessageMatches(message);
+            dc.setPenWidth(ARROW_PEN_WIDTH);
+            var halfArrowSize = ARROW_SIZE / 2.0f;
+
+            // --- Draw LEFT and RIGHT Arrows ---
+            // Shared Y coordinates for the horizontal arrow chevrons
+            var yTop = yHalfPhysical - halfArrowSize;
+            var yBottom = yHalfPhysical + halfArrowSize;
+
+            if (_cachedValues.isTouchScreen) {
+                // Draw LEFT Arrow (<--) with offset
+                var tipX = ARROW_WALL_OFFSET;
+                var xChevronPoint = tipX + halfArrowSize;
+                dc.drawLine(tipX, yHalfPhysical, xChevronPoint, yTop); // Upper chevron line
+                dc.drawLine(tipX, yHalfPhysical, xChevronPoint, yBottom); // Lower chevron line
+                dc.drawLine(tipX, yHalfPhysical, tipX + ARROW_SIZE, yHalfPhysical); // Shaft
+
+                // Draw RIGHT Arrow (-->) with offset
+                tipX = physicalScreenWidth - ARROW_WALL_OFFSET;
+                xChevronPoint = tipX - halfArrowSize;
+                dc.drawLine(tipX, yHalfPhysical, xChevronPoint, yTop); // Upper chevron line
+                dc.drawLine(tipX, yHalfPhysical, xChevronPoint, yBottom); // Lower chevron line
+                dc.drawLine(tipX, yHalfPhysical, tipX - ARROW_SIZE, yHalfPhysical); // Shaft
+            }
+
+            // --- Draw UP and DOWN Arrows ---
+            // Shared X coordinates for the vertical arrow chevrons
+            var xLeft = xHalfPhysical - halfArrowSize;
+            var xRight = xHalfPhysical + halfArrowSize;
+
+            // Draw UP Arrow with offset
+            var tipY = ARROW_WALL_OFFSET;
+            var yChevronPoint = tipY + halfArrowSize;
+            dc.drawLine(xHalfPhysical, tipY, xLeft, yChevronPoint); // Left chevron line
+            dc.drawLine(xHalfPhysical, tipY, xRight, yChevronPoint); // Right chevron line
+            dc.drawLine(xHalfPhysical, tipY, xHalfPhysical, tipY + ARROW_SIZE); // Shaft
+
+            if (settings.getAttribution() == null || !settings.mapEnabled) {
+                // Draw DOWN Arrow with offset
+                tipY = physicalScreenHeight - ARROW_WALL_OFFSET;
+                yChevronPoint = tipY - halfArrowSize;
+                dc.drawLine(xHalfPhysical, tipY, xLeft, yChevronPoint); // Left chevron line
+                dc.drawLine(xHalfPhysical, tipY, xRight, yChevronPoint); // Right chevron line
+                dc.drawLine(xHalfPhysical, tipY, xHalfPhysical, tipY - ARROW_SIZE); // Shaft
             }
             return;
         }
 
         // plus at the top of screen
         if (!_cachedValues.scaleCanInc) {
-            dc.drawBitmap2(xHalfPhysical - _nosmoking.getWidth() / 2, 0, _nosmoking, {
-                :tintColor => settings.uiColour,
-            });
+            // no smoking
+            drawNoSmokingSign(dc, xHalfPhysical, NO_SMOKING_RADIUS);
         } else {
             dc.drawLine(
                 xHalfPhysical - halfLineLength,
@@ -1566,14 +1596,8 @@ class BreadcrumbRenderer {
         if (settings.getAttribution() == null || !settings.mapEnabled) {
             // minus at the bottom
             if (!_cachedValues.scaleCanDec) {
-                dc.drawBitmap2(
-                    xHalfPhysical - _nosmoking.getWidth() / 2,
-                    physicalScreenHeight - _nosmoking.getHeight() - 3, // small padding for physcial device clipping
-                    _nosmoking,
-                    {
-                        :tintColor => settings.uiColour,
-                    }
-                );
+                // no smoking
+                drawNoSmokingSign(dc, xHalfPhysical, physicalScreenHeight - NO_SMOKING_RADIUS);
             } else {
                 dc.drawLine(
                     xHalfPhysical - halfLineLength,
@@ -1618,6 +1642,34 @@ class BreadcrumbRenderer {
         }
     }
 
+    function drawNoSmokingSign(dc as Dc, x as Float, y as Float) as Void {
+        var PEN_WIDTH = 2;
+        dc.setPenWidth(PEN_WIDTH);
+
+        // Draw the circle
+        dc.drawCircle(x, y, NO_SMOKING_RADIUS);
+
+        // TODO consider hard coding these once they are locked in
+
+        // --- Draw the Diagonal Line ---
+        // Calculate the endpoints so the line touches the *inner* edge of the circle's stroke.
+        // The radius for the line's endpoints is the outer radius minus the full pen width.
+        var lineEndpointRadius = NO_SMOKING_RADIUS - PEN_WIDTH;
+
+        // For a 45-degree line, the x and y offsets from the center are equal.
+        // Using Pythagorean theorem: offset^2 + offset^2 = radius^2
+        // So, offset = radius / sqrt(2)
+        var offset = lineEndpointRadius / Math.sqrt(2);
+
+        // Calculate the start (top-left) and end (bottom-right) points of the line
+        var startX = x - offset;
+        var startY = y - offset;
+        var endX = x + offset;
+        var endY = y + offset;
+
+        dc.drawLine(startX, startY, endX, endY);
+    }
+
     function getScaleDecIncAmount(direction as Number) as Float {
         var scale = _cachedValues.scale;
         if (scale == null) {
@@ -1631,22 +1683,23 @@ class BreadcrumbRenderer {
             return toInc;
         }
 
-        var scaleNames = settings.distanceImperialUnits ? SCALE_NAMES_IMPERIAL : SCALE_NAMES;
+        var scaleKeys = settings.distanceImperialUnits ? SCALE_KEYS_IMPERIAL : SCALE_KEYS;
+        var scaleValues = settings.distanceImperialUnits ? SCALE_VALUES_IMPERIAL : SCALE_VALUES;
         var scaleData = getScaleSizeGeneric(
             _cachedValues.currentScale,
             DESIRED_SCALE_PIXEL_WIDTH,
-            scaleNames
+            scaleKeys as Array<Number>,
+            scaleValues as Array<String>
         );
         var iInc = direction;
         var currentDistanceM = scaleData[1];
-        var keys = scaleNames.keys();
-        keys.sort(null);
-        for (var i = 0; i < keys.size(); ++i) {
-            var distanceM = keys[i];
+
+        for (var i = 0; i < scaleKeys.size(); ++i) {
+            var distanceM = scaleKeys[i];
             if (currentDistanceM == distanceM) {
                 var nextScaleIndex = i - iInc;
-                if (nextScaleIndex >= keys.size()) {
-                    nextScaleIndex = keys.size() - 1;
+                if (nextScaleIndex >= scaleKeys.size()) {
+                    nextScaleIndex = scaleKeys.size() - 1;
                 }
 
                 if (nextScaleIndex < 0) {
@@ -1654,7 +1707,7 @@ class BreadcrumbRenderer {
                 }
 
                 // we want the result to be
-                var nextDistanceM = keys[nextScaleIndex] / (1000f as Float);
+                var nextDistanceM = scaleKeys[nextScaleIndex] / (1000f as Float);
                 // -2 since we need some fudge factor to make sure we are very close to desired length, but not past it
                 var desiredScale = (DESIRED_SCALE_PIXEL_WIDTH - 2) / nextDistanceM;
                 var toInc = desiredScale - scale;
@@ -1992,17 +2045,30 @@ class BreadcrumbRenderer {
         var yHalfPhysical = _cachedValues.yHalfPhysical; // local lookup faster
         var physicalScreenHeight = _cachedValues.physicalScreenHeight; // local lookup faster
 
-        var hScaleNames = settings.distanceImperialUnits ? SCALE_NAMES_IMPERIAL : SCALE_NAMES;
-        var vScaleNames = settings.elevationImperialUnits
-            ? ELEVATION_SCALE_NAMES_IMPERIAL
-            : ELEVATION_SCALE_NAMES;
+        var hScaleKeys = settings.distanceImperialUnits ? SCALE_KEYS_IMPERIAL : SCALE_KEYS;
+        var hScaleValues = settings.distanceImperialUnits ? SCALE_VALUES_IMPERIAL : SCALE_VALUES;
+        var vScaleKeys = settings.elevationImperialUnits
+            ? ELEVATION_SCALE_KEYS_IMPERIAL
+            : ELEVATION_SCALE_KEYS;
+        var vScaleValues = settings.elevationImperialUnits
+            ? ELEVATION_SCALE_VALUES_IMPERIAL
+            : ELEVATION_SCALE_VALUES;
 
-        var hScaleData = getScaleSizeGeneric(hScalePPM, DESIRED_SCALE_PIXEL_WIDTH, hScaleNames);
+        var hScaleData = getScaleSizeGeneric(
+            hScalePPM,
+            DESIRED_SCALE_PIXEL_WIDTH,
+            hScaleKeys as Array<Number>,
+            hScaleValues as Array<String>
+        );
         var hPixelWidth = hScaleData[0];
-        var hDistanceM = hScaleData[1];
-        var vScaleData = getScaleSizeGeneric(vScale, DESIRED_ELEV_SCALE_PIXEL_WIDTH, vScaleNames);
+        var vScaleData = getScaleSizeGeneric(
+            vScale,
+            DESIRED_ELEV_SCALE_PIXEL_WIDTH,
+            vScaleKeys as Array<Number>,
+            vScaleValues as Array<String>
+        );
         var vPixelWidth = vScaleData[0];
-        var vDistanceM = vScaleData[1];
+
         dc.setColor(settings.uiColour, Graphics.COLOR_TRANSPARENT);
         dc.setPenWidth(1);
 
@@ -2080,9 +2146,7 @@ class BreadcrumbRenderer {
         dc.setPenWidth(3);
 
         if (hPixelWidth != 0) {
-            // if statement makes sure that we can get a SCALE_NAMES[hDistanceM]
-            var hFoundName = hScaleNames[hDistanceM];
-
+            var hFoundName = hScaleData[2];
             var y = physicalScreenHeight - 20;
             dc.drawLine(
                 xHalfPhysical - hPixelWidth / 2.0f,
@@ -2100,9 +2164,7 @@ class BreadcrumbRenderer {
         }
 
         if (vPixelWidth != 0) {
-            // if statement makes sure that we can get a ELEVATION_SCALE_NAMES[vDistanceM]
-            var vFoundName = vScaleNames[vDistanceM];
-
+            var vFoundName = vScaleData[2];
             var x = xHalfPhysical + DESIRED_SCALE_PIXEL_WIDTH / 2.0f;
             var y = physicalScreenHeight - 20 - 5 - vPixelWidth / 2.0f;
             dc.drawLine(x, y - vPixelWidth / 2.0f, x, y + vPixelWidth / 2.0f);

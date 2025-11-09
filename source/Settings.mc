@@ -307,7 +307,7 @@ class TileUpdateHandler {
             {},
             getApp()._commStatus
         );
-        WatchUi.showToast("Tile Server Reponse Failed", {});
+        WatchUi.showToast("Tile Server Response Failed", {});
     }
 }
 
@@ -1708,10 +1708,6 @@ class Settings {
         mode++;
         if (mode >= MODE_MAX) {
             mode = MODE_NORMAL;
-        }
-
-        if (mode == MODE_MAP_MOVE && !mapEnabled) {
-            nextMode();
         }
 
         if (mode == MODE_DEBUG && !includeDebugPageInOnScreenUi) {
