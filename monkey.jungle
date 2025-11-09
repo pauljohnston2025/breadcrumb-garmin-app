@@ -157,6 +157,10 @@ vivoactive5.excludeAnnotations = $(vivoactive5.excludeAnnotations);rectangle;sca
 vivoactive5.resourcePath = $(vivoactive5.resourcePath);resources-high-memory
 vivoactive6.excludeAnnotations = $(vivoactive6.excludeAnnotations);rectangle;noscaledbitmap;$(highMemExcludes)
 vivoactive6.resourcePath = $(vivoactive6.resourcePath);resources-high-memory
+etrextouch.excludeAnnotations = $(etrextouch.excludeAnnotations);rectangle;noscaledbitmap;$(highMemExcludes)
+etrextouch.resourcePath = $(etrextouch.resourcePath);resources-high-memory
+d2mach2.excludeAnnotations = $(d2mach2.excludeAnnotations);rectangle;noscaledbitmap;$(highMemExcludes)
+d2mach2.resourcePath = $(d2mach2.resourcePath);resources-high-memory
 
 
 # system 5 devices that had low memory on datafield, but have enough memory on app)
@@ -170,3 +174,5 @@ instincte40mm.excludeAnnotations = $(instincte40mm.excludeAnnotations);rectangle
 instincte40mm.resourcePath = $(instincte40mm.resourcePath);resources-low-memory
 instincte45mm.excludeAnnotations = $(instincte45mm.excludeAnnotations);rectangle;noscaledbitmap;$(lowMemExcludes)
 instincte45mm.resourcePath = $(instincte45mm.resourcePath);resources-low-memory
+
+

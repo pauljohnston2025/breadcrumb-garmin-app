@@ -51,7 +51,6 @@ function startPicker(
     );
 }
 
-(:settingsView)
 function safeSetSubLabel(
     menu as WatchUi.Menu2,
     id as Object,
