@@ -21,7 +21,10 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
         // we also allow it on the normal track page, since we can handle drag events in apps unlike on datafields.
         // perhaps on touchscreen devices this should be the only way to move?
         // it can be a bit finicky though, some users might still prefer the tapping interface (so ill leave both)
-        if (_breadcrumbContext.settings.mode != MODE_MAP_MOVE && _breadcrumbContext.settings.mode != MODE_NORMAL) {
+        if (
+            _breadcrumbContext.settings.mode != MODE_MAP_MOVE &&
+            _breadcrumbContext.settings.mode != MODE_NORMAL
+        ) {
             return false;
         }
 
@@ -252,8 +255,14 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
                 }
 
                 // If recording, cycle through the main display modes. or return to user if we have moved/zoomed
-                if (cachedValues.fixedPosition != null || cachedValues.scale != null) {
-                    _breadcrumbContext.breadcrumbRenderer.returnToUser();
+                if (
+                    (cachedValues.fixedPosition != null || cachedValues.scale != null) &&
+                    (_breadcrumbContext.settings.mode == MODE_NORMAL ||
+                        _breadcrumbContext.settings.mode == MODE_MAP_MOVE)
+                ) {
+                    // force return to use, even if we are on the debug page (otherwise we cannot use the button press)
+                    // we also check if we are on the right page, otherwise the first button press will clear the users location but do nothing on th ui
+                    _breadcrumbContext.cachedValues.returnToUser();
                 } else {
                     _breadcrumbContext.settings.nextMode();
                 }
@@ -277,7 +286,7 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
         var cachedValues = _breadcrumbContext.cachedValues;
         if (cachedValues.isTouchScreen) {
             // they should be pressing the screen, drag events are handled for map panning
-            return false;  // let it propagate
+            return false; // let it propagate
         }
         var settings = _breadcrumbContext.settings;
         var renderer = _breadcrumbContext.breadcrumbRenderer;
@@ -295,7 +304,7 @@ class BreadcrumbDelegate extends WatchUi.BehaviorDelegate {
         var cachedValues = _breadcrumbContext.cachedValues;
         if (cachedValues.isTouchScreen) {
             // they should be pressing the screen, drag events are handled for map panning
-            return false;  // let it propagate
+            return false; // let it propagate
         }
         var settings = _breadcrumbContext.settings;
         var renderer = _breadcrumbContext.breadcrumbRenderer;
