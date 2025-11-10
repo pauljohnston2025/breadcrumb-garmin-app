@@ -4,11 +4,6 @@ I could use monkey barrels to share common code, but they have a memory overhead
 
 This serves as the repo for the 'App' type of Breadcrumb, there may be some comments/documentation that still say datafield.
 
-The Versioning scheme is 
-
-0.X -> BreadcrumbDataField (we will reserve 0-9.X for the datafield app)
-10.X -> BreadcrumbApp
-
 A garmin watch app that shows a breadcrumb trail. For watches that do not support breadcrumb navigation out of the box.
 
 Donations are always welcome, but not required: https://www.paypal.com/paypalme/pauljohnston2025
