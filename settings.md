@@ -24,6 +24,23 @@ Some helpful guides on adding data fields:
 
 ---
 
+The main differences between the app and the datafield are that i can support button presses and touch input on apps.    
+Please note: If the app crashes from memory or cpu the app will close, adn may or may not save the activity that it was recording. Some users may prefer a datafields so they do not loose their activity progress, and can complete the activity in one session.
+
+The on screen ui is currently.
+
+Touch devices can pan the map around when on any map page (drag finger around screen).      
+Long press on the settings/menu key will open app settings (on supported devices). The menu key changes, on 5 button devices it is generally the middle key on the left, on devices with fewer buttons it is generally the bottom right button.    
+Esc/Exit (generally bottom right) key will open a menu asking if you would like to save the activity.   
+Start key (generally top right) is used to start the app, and also used to [return to user](#return-to-user) if the icon is displayed. Otherwise the start button cycles between modes (elevation/track/map move/debug/etc).     
+
+Button presses are as follows.
+
+![](images/button-ui.jpg)
+![](images/button-ui-map-move.jpg)
+
+---
+
 All settings are editable from 4 places.
 
 Please note: All settings are entered in metric (meters or seconds) because there is no way for me to support both without bloating the app considerably. The watch will render the distance and elevation scales based on the units set on the watches system settings.  

@@ -6,6 +6,8 @@ This serves as the repo for the 'App' type of Breadcrumb, there may be some comm
 
 A garmin watch app that shows a breadcrumb trail. For watches that do not support breadcrumb navigation out of the box.
 
+The app provides extra functionality, and enables companion app map tiles on more watches.
+
 Donations are always welcome, but not required: https://www.paypal.com/paypalme/pauljohnston2025
 
 Information on all the settings can be found in [Settings](settings.md)  
